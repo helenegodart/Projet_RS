@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include "utilitaire.h"
 #include "niveau.h"
 #include "terminal.h"
 
@@ -18,43 +19,39 @@ int main(int argc, char const *argv[])
 	decompression("niveau1", commande, &niveau);
 
 	while(continuer){
+		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
 		debutLigne(commande);
-		fgets(commande->commande, TAILLE_MAX_COMMANDE, stdin);
-		commande->commande = substr(commande->commande, 0, strlen(commande->commande)-1	);
-		printf("%s\n", commande->commande);
+		fgets(saisie, TAILLE_MAX_COMMANDE, stdin);
+		clean(saisie);
+		// commande->commande = substr(commande->commande, 0, strlen(commande->commande)-1	);
+		strcpy(commande->commande, saisie);
+		execution(commande);
 		}
 	return 0;
 }
 
 void execution(Commande *commande){
+	int nbArgument = nbArg(commande->commande);
+	printf("commande : %s\n", commande->commande);
+	printf("nb arg : %d\n", nbArgument);
 
+	ListeString *listeArg = malloc(sizeof(ListeString));
+	if (nbArgument >= 1)
+	{
+		// char *arg1 = ;
+		listeArg =  initialisationString(premierArg(commande->commande));
+		determinationArgs(listeArg, commande);
+	}
+
+	// Gestion particulière du cd
+	if (!strcmp(substr(commande->commande,0,2), "cd"))
+	{
+		
+	}
 }
 
 void debutLigne(Commande *commande){
 	fprintf(stderr,"%s > ", commande->directory);
-}
-
-// void getLigne(char *commande){
-//     // fgets(commande, TAILLE_MAX_COMMANDE, stdin);
-//     // clean(commande, stdin);
-//     printf("getligne\n");
-//     char *temp;
-//     scanf("%s",temp);
-//     getchar();
-//     fprintf(stderr,"len : %d\n", strlen(temp));
-//     commande = malloc(strlen(temp)*sizeof(char));
-//     printf("malloc\n");
-//     strcpy(commande, temp);
-// }
-	 
-void clean(const char *buffer, FILE *fp){
-    char *p = strchr(buffer,'\n');
-    if (p != NULL)
-        *p = 0;
-    else{
-	    int c;
-	    while ((c = fgetc(fp)) != '\n' && c != EOF);
-    }
 }
 
 void descriptifNiveau(Niveau *niveau){
@@ -70,6 +67,19 @@ void descriptifNiveau(Niveau *niveau){
 }
 
 void initialiseCommande(Commande *c){
-	c->commande = malloc(sizeof(c));
-	c->directory = malloc(sizeof(c));
+	c->commande = malloc(sizeof(char));
+	c->directory = malloc(sizeof(char));
+}
+
+void determinationArgs(ListeString *liste, Commande *commande){
+	char *temp = malloc(sizeof(char)*strlen(commande->commande));
+	char *arg = malloc(sizeof(char)*strlen(commande->commande));
+	strcpy(temp, commande->commande);
+	printf("temp : %s\n", temp);
+	arg = strtok(temp, " ");
+	while((arg = strtok(NULL, " ")) != NULL)
+	{
+		printf("insertion de : %s\n", arg);
+		insertionString(*(&liste), arg); 
+	}
 }

@@ -32,10 +32,8 @@ ListeString *initialisationString(char *c);
 // Crée un niveau à partir du fichier passé en paramètre
 void creerNiveau(char *path, Niveau *niveau);
 
+// Insère une nouvelle chaine de caractère dans une liste chainee liste
 void insertionString(ListeString *liste, char *string);
-
-// Renvoie une sous chaine de la chaine passée en argument
-char *substr(char *src,int pos,int len);
 
 // Décompresse l'archive tar.gz du niveau et le crée
 void decompression(char *nom, Commande *commande, Niveau *niveau);

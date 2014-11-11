@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include "utilitaire.h"
 #include "niveau.h"
 
 
@@ -88,16 +89,6 @@ void insertionString(ListeString *liste, char *string){
     // printf("nouveau->suivant : %s\n", nouveau->suivant->string);
     nouveau->suivant = liste->premier;
     liste->premier = nouveau;
-}
-
-char *substr(char *src,int pos,int len) { 
-  char *dest=NULL;                        
-  if (len>0) {                          
-    dest = calloc(len+1, 1);       
-    if(NULL != dest)
-        strncat(dest,src+pos,len);            
-  }                                       
-  return dest;                            
 }
 
 void decompression(char *nom, Commande *commande, Niveau *niveau){
