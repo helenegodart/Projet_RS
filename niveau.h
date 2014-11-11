@@ -1,4 +1,10 @@
-#define TAILLE_MAX_COMMANDE 50
+#define TAILLE_MAX_COMMANDE 200
+
+typedef struct Commande Commande;
+struct Commande{
+	char *directory;
+	char *commande;
+};
 
 typedef struct String String;
 struct String
@@ -30,3 +36,6 @@ void insertionString(ListeString *liste, char *string);
 
 // Renvoie une sous chaine de la chaine passée en argument
 char *substr(char *src,int pos,int len);
+
+// Décompresse l'archive tar.gz du niveau et le crée
+void decompression(char *nom, Commande *commande, Niveau *niveau);

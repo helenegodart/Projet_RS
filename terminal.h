@@ -1,13 +1,7 @@
 
 
-typedef struct Commande Commande;
-struct Commande{
-	char *directory;
-	char *commande;
-};
-
 // Ecrit le working directory plus ">"
-void debutLigne();
+void debutLigne(Commande *commande);
 
 // 
 void clean(const char *buffer, FILE *fp);
@@ -20,3 +14,6 @@ void descriptifNiveau(Niveau *niveau);
 
 // Execute la commande lancée par l'utilisateur
 void execution(Commande *commande);
+
+// 
+void initialiseCommande(Commande *c);

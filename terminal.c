@@ -9,18 +9,19 @@ int main(int argc, char const *argv[])
 {
 	int continuer = 1;
 
-	char commande[20] = "";
-	Commande *commande;
-	commande = initialiseCommande();
+	Commande *commande = malloc(sizeof(commande));
+	initialiseCommande(commande);
 
 	Niveau niveau;
-	creerNiveau("meta", &niveau);
-	descriptifNiveau(&niveau);
+	// creerNiveau("niveau1", &niveau);
+	// descriptifNiveau(&niveau);
+	decompression("niveau1", commande, &niveau);
 
 	while(continuer){
-		debutLigne();
-		getLigne(commande);
-		printf("%s\n", commande);
+		debutLigne(commande);
+		fgets(commande->commande, TAILLE_MAX_COMMANDE, stdin);
+		commande->commande = substr(commande->commande, 0, strlen(commande->commande)-1	);
+		printf("%s\n", commande->commande);
 		}
 	return 0;
 }
@@ -29,15 +30,22 @@ void execution(Commande *commande){
 
 }
 
-void debutLigne(){
-
-	fprintf(stderr,"> ");
+void debutLigne(Commande *commande){
+	fprintf(stderr,"%s > ", commande->directory);
 }
 
-void getLigne(char *commande){
-    fgets(commande, 50, stdin);
-    clean(commande, stdin);
-}
+// void getLigne(char *commande){
+//     // fgets(commande, TAILLE_MAX_COMMANDE, stdin);
+//     // clean(commande, stdin);
+//     printf("getligne\n");
+//     char *temp;
+//     scanf("%s",temp);
+//     getchar();
+//     fprintf(stderr,"len : %d\n", strlen(temp));
+//     commande = malloc(strlen(temp)*sizeof(char));
+//     printf("malloc\n");
+//     strcpy(commande, temp);
+// }
 	 
 void clean(const char *buffer, FILE *fp){
     char *p = strchr(buffer,'\n');
@@ -61,6 +69,7 @@ void descriptifNiveau(Niveau *niveau){
 	printf("Solution : %s\n", niveau->phraseMystere);
 }
 
-void initialiseCommande(){
-	
+void initialiseCommande(Commande *c){
+	c->commande = malloc(sizeof(c));
+	c->directory = malloc(sizeof(c));
 }

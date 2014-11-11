@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
 #include "niveau.h"
 
 
@@ -95,4 +98,34 @@ char *substr(char *src,int pos,int len) {
         strncat(dest,src+pos,len);            
   }                                       
   return dest;                            
+}
+
+void decompression(char *nom, Commande *commande, Niveau *niveau){
+    char *decompresse = malloc(sizeof(char)*(strlen(nom)+7));
+    int status;
+    sprintf(decompresse, "%s.tar.gz", nom);
+    
+    int pid = fork();
+    if (pid == -1)
+    {
+        fprintf(stderr, "Erreur fork\n");
+        exit(EXIT_FAILURE);
+    }
+    if(pid == 0)
+    {
+        execlp("tar", "tar", "-xf", decompresse, NULL);
+        exit(0);
+    }else
+    {
+        waitpid(pid, &status, WCONTINUED);
+        if (WIFEXITED(status))
+        {
+            chdir(nom);
+            strcat(commande->directory, nom);
+            // execlp("ls", "ls", NULL);
+            creerNiveau("meta", niveau);
+            // descriptifNiveau(niveau);
+            remove("meta");   
+        }
+    }
 }
