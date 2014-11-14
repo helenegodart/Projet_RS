@@ -35,5 +35,5 @@ void creerNiveau(char *path, Niveau *niveau);
 // Insère une nouvelle chaine de caractère dans une liste chainee liste
 void insertionString(ListeString *liste, char *string);
 
-// Décompresse l'archive tar.gz du niveau et le crée
+// Décompresse l'archive tar.gz du niveau et le crée 
 void decompression(char *nom, Commande *commande, Niveau *niveau);

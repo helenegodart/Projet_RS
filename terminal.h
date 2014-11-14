@@ -12,5 +12,5 @@ void execution(Commande *commande);
 // Initialise la première commande
 void initialiseCommande(Commande *c);
 
-// remplie la liste chainée des arguments de la commande
+// remplie la liste chainée des arguments de la commande utilisateur
 void determinationArgs(ListeString *liste, Commande *commande);
