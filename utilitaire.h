@@ -19,3 +19,15 @@ void clean (char *chaine);
 
 // Vider le buffer
 void purger();
+
+// Teste si une chaine appartient à une liste chaînée
+int appartient(char *chaine, ListeString *liste);
+
+// recherche le caractère dans la chaine et renvoie l'indice
+int search(char *chaine, char c);
+
+// niveau1/dossier1/ devient niveau1/
+void remonterDossier(Commande *commande);
+
+//Crée un tableau avec les arguments
+void creeTabArgs(char **tab, ListeString *liste, int nbArguments);

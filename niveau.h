@@ -4,6 +4,7 @@ typedef struct Commande Commande;
 struct Commande{
 	char *directory;
 	char *commande;
+	int niveau;
 };
 
 typedef struct String String;

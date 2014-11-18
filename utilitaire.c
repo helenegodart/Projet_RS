@@ -2,8 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include "niveau.h"
+#include "terminal.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include "utilitaire.h"
 #include <errno.h>
 
@@ -19,16 +22,20 @@ char *substr(char *src,int pos,int len) {
 
 int fileExists(char *path){
 	FILE *fichier = NULL;
-	fichier = fopen(path,  "r");
+	fichier = fopen(path,  "r+");
  
 	if (fichier == NULL)
-	    return 1;
+	    return 0;
 	else
-		return 0;
+		return 1;
 }
 
 int dirExists(char *path){
-
+  struct stat  file_stat; 
+  if (stat(path,&file_stat) < 0)
+    return 0;
+  else 
+    return 1;
 }
 
 int nbArg(char *commande){
@@ -63,4 +70,43 @@ void clean (char *chaine){
     {
         purger();
     }
+}
+
+int appartient(char *chaine, ListeString *liste){
+  String *temp = liste->premier;
+  if(!strcmp(chaine, temp->string))
+    return 1;
+  while((temp = temp->suivant) != NULL){
+    if (!strcmp(chaine, temp->string))
+      return 1;
+  }
+  return 0;
+}
+
+int search(char *chaine, char c){
+  int i;
+  for (i = 0; i < strlen(chaine); ++i)
+  {
+    if (chaine[i] == c)
+      return i;
+  }
+  return 0;
+}
+
+void remonterDossier(Commande *commande){
+  int indice = search(commande->directory, '/');
+  commande->directory = substr(commande->directory, 0, strlen(commande->directory)-indice-2);
+}
+
+void creeTabArgs(char **tab, ListeString *liste, int nbArguments){
+  int i = 0;
+  int nb = nbArguments +1 ;
+  String *temp = liste->premier;
+  
+  tab[nb-1] = temp->string;
+  while((temp = temp->suivant) != NULL)
+  {
+    i++;
+    tab[nb-1-i] = temp->string;
+  }
 }

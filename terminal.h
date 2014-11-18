@@ -7,7 +7,7 @@ void debutLigne(Commande *commande);
 void descriptifNiveau(Niveau *niveau);
 
 // Execute la commande lancée par l'utilisateur
-void execution(Commande *commande);
+void execution(Commande *commande, Niveau *niveau);
 
 // Initialise la première commande
 void initialiseCommande(Commande *c);

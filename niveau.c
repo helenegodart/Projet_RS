@@ -5,8 +5,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <errno.h>
-#include "utilitaire.h"
 #include "niveau.h"
+#include "utilitaire.h"
 
 
 void creerNiveau(char *path, Niveau *niveau)
@@ -27,8 +27,8 @@ void creerNiveau(char *path, Niveau *niveau)
     }else
     {
         fgets(ligne, TAILLE_MAX_COMMANDE, fichier);
-        while(!(!strcmp(ligne, "--"))){
-            indicateur = substr(ligne, 0, 1);
+        indicateur = substr(ligne, 0, 1);
+        while(!(!strcmp(indicateur, "-"))){
             string = substr(ligne, 2, strlen(ligne)-3);
                 if (!strcmp(indicateur, "$"))
                 {
@@ -49,9 +49,13 @@ void creerNiveau(char *path, Niveau *niveau)
                 {
                 	niveau->phraseMystere = string;
                 }
-                else
-                	printf("Fichier corrompu !\n");
+                else{
+                	fprintf(stderr,"Fichier corrompu !\n"); 
+                    exit(EXIT_FAILURE);
+                }
+                
                 fgets(ligne, TAILLE_MAX_COMMANDE, fichier);
+                indicateur = substr(ligne, 0, 1);
         }
  
         fclose(fichier);
@@ -113,6 +117,7 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
         {
             chdir(nom);
             strcat(commande->directory, nom);
+            commande->niveau = 0;
             // execlp("ls", "ls", NULL);
             creerNiveau("meta", niveau);
             // descriptifNiveau(niveau);
