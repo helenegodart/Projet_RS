@@ -94,6 +94,7 @@ int search(char *chaine, char c){
 }
 
 void remonterDossier(Commande *commande){
+  printf("remonterDossier\n");
   int indice = search(commande->directory, '/');
   commande->directory = substr(commande->directory, 0, strlen(commande->directory)-indice-2);
 }
@@ -102,11 +103,74 @@ void creeTabArgs(char **tab, ListeString *liste, int nbArguments){
   int i = 0;
   int nb = nbArguments +1 ;
   String *temp = liste->premier;
-  
+
   tab[nb-1] = temp->string;
   while((temp = temp->suivant) != NULL)
   {
     i++;
     tab[nb-1-i] = temp->string;
   }
+}
+
+// int nombreRetourArriere(Commande *commande){
+//   int cpt = 0;
+//   int consecutif = 1;
+
+//   char *chaine = malloc(sizeof(char)*strlen(commande->commande));
+//   char *temp = malloc(sizeof(char)*strlen(commande->commande));
+
+//   strcpy(chaine, commande->commande);
+//   // strcpy(temp, chaine);
+
+//   int i, length = strlen(chaine);
+//   temp = strtok(chaine, "/");
+//   cpt++;
+//   while((temp = strtok(NULL, "/")) != NULL){
+//     printf("%s|\n", temp);
+//     if (!strcmp(temp, "..") && consecutif)
+//       cpt++;
+//     else if(!strcmp(temp, "..") && !consecutif)
+//       consecutif = 1;
+//     else{
+//       consecutif = 0;
+//       cpt = 1;
+//     }
+//   }
+    
+
+//   printf("nombreRetourArriere : %d\n", (cpt+1));
+//   return (cpt+1);
+// }
+
+int incrementNiveau(Commande *commande){
+  int cpt = 0;
+
+  char *chaine = malloc(sizeof(char)*strlen(commande->commande));
+  char *temp = malloc(sizeof(char)*strlen(commande->commande));
+
+  strcpy(chaine, commande->commande);
+
+  int i, length = strlen(chaine);
+  temp = strtok(chaine, "/");
+  if(!(!strcmp(temp, "..")))
+    cpt++;
+  while((temp = strtok(NULL, "/")) != NULL){
+    printf("%s|\n", temp);
+    if (!(!strcmp(temp, "..")))
+      cpt++;
+    else{
+      cpt--;
+    }
+  }
+    
+
+  printf("nombreAvancee : %d\n", (cpt));
+  return (cpt);
+}
+
+int accessible(Commande *commande){
+  if (commande->niveau+incrementNiveau(commande) >=0)
+    return 1;
+  else
+    return 0;
 }

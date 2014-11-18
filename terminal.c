@@ -31,6 +31,7 @@ int main(int argc, char const *argv[])
 
 void execution(Commande *commande, Niveau *niveau){
 	int nbArgument = nbArg(commande->commande);
+	int ok = 1;
 	// printf("commande : %s\n", commande->commande);
 	// printf("nb arg : %d\n", nbArgument);
 
@@ -61,21 +62,8 @@ void execution(Commande *commande, Niveau *niveau){
 			// Vérifie qu'il n'y a qu'un seul argument après le cd
 			if (nbArgument == 1)
 			{
-				// Vérifie l'application du cd ../
-				if (!strcmp(listeArg->premier->string, "..") || !strcmp(listeArg->premier->string, "../") || !strcmp(listeArg->premier->string, ".") || !strcmp(listeArg->premier->string, "./"))
-				{
-					if (!strcmp(listeArg->premier->string, ".") || !strcmp(listeArg->premier->string, "./"))
-						printf("INTERDIT !!\n");
-					else if (commande->niveau > 0)
-					{
-						chdir("../");
-						remonterDossier(commande);
-						commande->niveau = commande->niveau - 1;
-					}else
-						printf("INTERDIT !!\n");
-				}
-				// Vérifie que le dossier visé existe et qu'il n'est pas un fichier
-				else if (dirExists(listeArg->premier->string))
+				// Vérifie que le dossier visé existe et qu'il n'est pas un fichier et qu'il n'est pas au-dessus de la racine
+				if (dirExists(listeArg->premier->string) && accessible(commande))
 				{
 					// Vérifie que ce n'est pas un fichier
 					if(fileExists(listeArg->premier->string))
@@ -83,7 +71,7 @@ void execution(Commande *commande, Niveau *niveau){
 					else{
 						chdir(listeArg->premier->string);
 						sprintf(commande->directory, "%s/%s", commande->directory, listeArg->premier->string);
-						commande->niveau = commande->niveau + 1;
+						commande->niveau = commande->niveau + incrementNiveau(commande);
 					}
 				}else
 					printf("Le répertoire \"%s\" n'existe pas !!\n", listeArg->premier->string);

@@ -31,3 +31,12 @@ void remonterDossier(Commande *commande);
 
 //Crée un tableau avec les arguments
 void creeTabArgs(char **tab, ListeString *liste, int nbArguments);
+
+// // Renvoie le nb de retour en arrière par cd ../../../ => 3
+// int nombreRetourArriere(Commande *commande);
+
+// Renvoie le nb d'avancées par cd /dossier1/dossier2 => 2
+int incrementNiveau(Commande *commande);
+
+// Renvoie un boolean pour savoir si on peut accéder au dossier (utilise la fonction au-dessus)
+int accessible(Commande *commande);
