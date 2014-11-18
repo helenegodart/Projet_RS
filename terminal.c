@@ -65,7 +65,7 @@ void execution(Commande *commande, Niveau *niveau){
 				// Vérifie que le dossier visé existe et qu'il n'est pas un fichier et qu'il n'est pas au-dessus de la racine
 				if (dirExists(listeArg->premier->string) && accessible(commande))
 				{
-					// Vérifie que ce n'est pas un fichier
+					// Vérifie que ce n'est pas un fichier 
 					if(fileExists(listeArg->premier->string))
 						printf("\"%s\" est un fichier !!\n", listeArg->premier->string);
 					else{
