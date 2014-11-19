@@ -157,3 +157,7 @@ void fixDirectory(Commande *commande, Niveau *niveau){
   temp = strstr(commande->directory, niveau->nom);
   strcpy(commande->directory, temp);
 }
+
+void pwd(Commande *commande){
+  printf("%s\n", commande->directory);
+}
