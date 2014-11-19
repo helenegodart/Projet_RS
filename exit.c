@@ -9,7 +9,7 @@
 void ifExit(Commande *commande){
 
 char *temp = malloc(sizeof(char)*strlen(commande->commande));
-	if (strcmp(commande, "exit")==0){
+	if (strcmp(commande->commande, "exit")==0){
 
 	}
 }
