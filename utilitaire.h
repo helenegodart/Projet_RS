@@ -6,7 +6,7 @@ char *substr(char *src,int pos,int len);
 int fileExists(char *path);
 
 //Retourne le nombre d'argument d'une commande utilisateur
-int nbArguments(char *commande);
+int nbArg(Commande *commande);
 
 // Test si le dossier existe 
 int dirExists(char *path);
@@ -46,3 +46,6 @@ void pwd(Commande *commande);
 
 // Retourne à la racine du niveau
 void goBackRoot(Commande *commande);
+
+// Construit la liste chaînée qui contient les arguments
+void buildArgsChain(ListeString *liste, Commande *commande);

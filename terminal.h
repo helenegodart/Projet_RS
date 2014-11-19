@@ -17,3 +17,6 @@ void determinationArgs(ListeString *liste, Commande *commande);
 
 // test toutes les commandes/signaux particuliers (CTRL-C, exit...)
 void exceptionProcessing(Commande *commande);
+
+// Lance l'exécution d'une commande (appel execlp + fork + pipe..)
+void exec(ListeString *listeArg, Commande *commande);

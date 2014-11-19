@@ -34,7 +34,8 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
                 {
                     if (premierPassage)
                     {
-                        niveau->charAutorise = initialisationString(string);
+                        niveau->charAutorise = malloc(sizeof(niveau->charAutorise));
+                        initialisationString(niveau->charAutorise, string);
                         premierPassage = 0;
                     }else
                     {
@@ -65,8 +66,7 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
     strcpy(niveau->nom, nomNiveau);
 }
 
-ListeString *initialisationString(char *c){
-	ListeString *liste = malloc(sizeof(*liste));
+void initialisationString(ListeString *liste, char *c){
     String *string = malloc(sizeof(*string));
 
     if (liste == NULL || string == NULL)
@@ -77,8 +77,6 @@ ListeString *initialisationString(char *c){
     string->string = c;
     string->suivant = NULL;
     liste->premier = string;
-
-    return liste;
 }
 
 void insertionString(ListeString *liste, char *string){

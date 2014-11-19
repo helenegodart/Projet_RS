@@ -33,7 +33,7 @@ int main(int argc, char const *argv[])
 
 void execution(Commande *commande, Niveau *niveau){
 	fixDirectory(commande, niveau);
-	int nbArgument = nbArg(commande->commande);
+	int nbArgument = nbArg(commande);
 	int ok = 1;
 	// printf("commande : %s\n", commande->commande);
 	// printf("nb arg : %d\n", nbArgument);
@@ -53,11 +53,7 @@ void execution(Commande *commande, Niveau *niveau){
 	else
 	{
 		ListeString *listeArg = malloc(sizeof(ListeString));
-		if (nbArgument >= 1)
-		{
-			listeArg =  initialisationString(premierArg(commande->commande));
-			determinationArgs(listeArg, commande);
-		}
+		buildArgsChain(listeArg, commande);
 
 		// Gestion particulière du cd
 		if (!strcmp(substr(commande->commande,0,2), "cd"))
@@ -86,8 +82,9 @@ void execution(Commande *commande, Niveau *niveau){
 		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
 			pwd(commande);
 		// Gestion de >>
-		else if(isRedirector(commande))
+		else if(isRedirector(commande)){
 			redirection(commande);
+		}
 		// Commandes sans argument
 		else if (nbArgument == 0)
 		{
@@ -114,29 +111,7 @@ void execution(Commande *commande, Niveau *niveau){
 		// commandes autres que cd avec argument(s)
 		else
 		{
-			int fd[2];
-			pipe(fd);
-			int status;
-			int pid = fork();
-		    if (pid == -1)
-		    {
-		        fprintf(stderr, "Erreur fork\n");
-		        exit(EXIT_FAILURE);
-		    }
-		    if(pid == 0)
-		    {
-		    	char **tab = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*nbArgument);
-		    	creeTabArgs(tab, listeArg, nbArgument);
-		        execvp(tab[0], tab);
-		        exit(0);
-		    }else
-		    {
-		        waitpid(pid, &status, WCONTINUED);
-		        if (WIFEXITED(status))
-		        {
-		        	
-		        }
-		    }
+			exec(listeArg, commande);
 		}
 	}
 }
@@ -175,4 +150,36 @@ void determinationArgs(ListeString *liste, Commande *commande){
 
 void exceptionProcessing(Commande *commande){
 	ifExit(commande);
+}
+
+void exec(ListeString *listeArg, Commande *commande){
+	int nbArgument = nbArg(commande);
+	int fd[2];
+	pipe(fd);
+	int status;
+	pid_t pid = fork();
+    if (pid == -1)
+    {
+        fprintf(stderr, "Erreur fork\n");
+        exit(EXIT_FAILURE);
+    }
+    if(pid == 0)
+    {
+    	char **tab = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*nbArgument);
+    	creeTabArgs(tab, listeArg, nbArgument);
+    	close(fd[0]);
+	   	dup2(fd[1], 1);
+	   	close(fd[1]);
+        execvp(tab[0], tab);
+        exit(0);
+    }else
+    {
+        waitpid(pid, &status, WCONTINUED);
+        if (WIFEXITED(status))
+        {
+        	char *sortie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
+        	read(fd[0], sortie, TAILLE_MAX_COMMANDE*200);
+        	printf("%s", sortie);
+        }
+    }
 }

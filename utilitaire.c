@@ -38,10 +38,10 @@ int dirExists(char *path){
     return 1;
 }
 
-int nbArg(char *commande){
+int nbArg(Commande *commande){
 	int nb = 0;
-	char *temp = malloc((strlen(commande))*sizeof(char));
-	strcpy(temp, commande);
+	char *temp = malloc((strlen(commande->commande))*sizeof(char));
+	strcpy(temp, commande->commande);
 	strtok(temp, " ");
 	while(strtok(NULL, " ") != NULL)
 		nb = nb +1;
@@ -143,6 +143,7 @@ int incrementNiveau(Commande *commande){
       cpt--;
     }
   }
+  fprintf(stderr, "incrementNiveau : %d\n", cpt);
   return cpt;
 }
 
@@ -172,4 +173,12 @@ void goBackRoot(Commande *commande){
   {
     chdir("..");
   }
+}
+
+void buildArgsChain(ListeString *liste, Commande *commande){
+  if (nbArg(commande) >= 1)
+    {
+      initialisationString(liste, premierArg(commande->commande));
+      determinationArgs(liste, commande);
+    }
 }
