@@ -7,5 +7,9 @@
 #include "terminal.h"
 
 void ifExit(Commande *commande){
-	
+
+char *temp = malloc(sizeof(char)*strlen(commande->commande));
+	if (strcmp(commande, "exit")==0){
+
+	}
 }
