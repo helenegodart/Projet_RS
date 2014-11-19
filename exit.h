@@ -1,0 +1,1 @@
+void ifExit(Commande *commande);

@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "niveau.h"
+#include "exit.h"
 #include "utilitaire.h"
 #include "terminal.h"
 
@@ -35,7 +36,7 @@ void execution(Commande *commande, Niveau *niveau){
 	int ok = 1;
 	// printf("commande : %s\n", commande->commande);
 	// printf("nb arg : %d\n", nbArgument);
-
+	exceptionProcessing(commande);
 	// Vérifie si la commande est autorisée dans ce niveau
 	if (!appartient(premierArg(commande->commande), niveau->charAutorise))
 	{
@@ -162,4 +163,8 @@ void determinationArgs(ListeString *liste, Commande *commande){
 	{
 		insertionString(*(&liste), arg); 
 	}
+}
+
+void exceptionProcessing(Commande *commande){
+	ifExit(commande);
 }
