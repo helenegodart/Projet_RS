@@ -40,3 +40,6 @@ int accessible(Commande *commande);
 
 // Remet à jour le directory
 void fixDirectory(Commande *commande, Niveau *niveau);
+
+// Affiche le working directory
+void pwd(Commande *commande);

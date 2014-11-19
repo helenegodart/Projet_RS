@@ -80,6 +80,9 @@ void execution(Commande *commande, Niveau *niveau){
 			}else
 				printf("La commande \"cd\" prend un argument !!\n");
 		}
+		// gestion du pwd
+		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
+			pwd(commande);
 		// Commandes sans argument
 		else if (nbArgument == 0)
 		{
