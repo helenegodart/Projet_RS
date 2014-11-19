@@ -9,7 +9,7 @@
 #include "utilitaire.h"
 
 
-void creerNiveau(char *path, Niveau *niveau)
+void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
 {
     int premierPassage = 1;
     FILE* fichier = NULL;
@@ -60,6 +60,9 @@ void creerNiveau(char *path, Niveau *niveau)
  
         fclose(fichier);
     }
+
+    niveau->nom = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
+    strcpy(niveau->nom, nomNiveau);
 }
 
 ListeString *initialisationString(char *c){
@@ -119,7 +122,7 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
             strcat(commande->directory, nom);
             commande->niveau = 0;
             // execlp("ls", "ls", NULL);
-            creerNiveau("meta", niveau);
+            creerNiveau("meta", niveau, nom);
             // descriptifNiveau(niveau);
             remove("meta");   
         }

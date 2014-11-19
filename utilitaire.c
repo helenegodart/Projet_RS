@@ -112,36 +112,6 @@ void creeTabArgs(char **tab, ListeString *liste, int nbArguments){
   }
 }
 
-// int nombreRetourArriere(Commande *commande){
-//   int cpt = 0;
-//   int consecutif = 1;
-
-//   char *chaine = malloc(sizeof(char)*strlen(commande->commande));
-//   char *temp = malloc(sizeof(char)*strlen(commande->commande));
-
-//   strcpy(chaine, commande->commande);
-//   // strcpy(temp, chaine);
-
-//   int i, length = strlen(chaine);
-//   temp = strtok(chaine, "/");
-//   cpt++;
-//   while((temp = strtok(NULL, "/")) != NULL){
-//     printf("%s|\n", temp);
-//     if (!strcmp(temp, "..") && consecutif)
-//       cpt++;
-//     else if(!strcmp(temp, "..") && !consecutif)
-//       consecutif = 1;
-//     else{
-//       consecutif = 0;
-//       cpt = 1;
-//     }
-//   }
-    
-
-//   printf("nombreRetourArriere : %d\n", (cpt+1));
-//   return (cpt+1);
-// }
-
 int incrementNiveau(Commande *commande){
   int cpt = 0;
 
@@ -152,20 +122,25 @@ int incrementNiveau(Commande *commande){
 
   int i, length = strlen(chaine);
   temp = strtok(chaine, "/");
-  if(!(!strcmp(temp, "..")))
+  if(!(!strcmp(substr(temp, 3, strlen(temp)-1), ".."))){
     cpt++;
+    // printf("%s|\n", substr(temp, 3, strlen(temp)-1));
+  }
+  else if (!strcmp(substr(temp, 3, strlen(temp)-1), ".."))
+  {
+    cpt--;
+    // printf("%s|\n", substr(temp, 3, strlen(temp)-1));
+  }
   while((temp = strtok(NULL, "/")) != NULL){
-    printf("%s|\n", temp);
+    // printf("%s|\n", temp);
     if (!(!strcmp(temp, "..")))
       cpt++;
-    else{
+    else if(!strcmp(temp, "..")){
       cpt--;
     }
   }
-    
-
   printf("nombreAvancee : %d\n", (cpt));
-  return (cpt);
+  return cpt;
 }
 
 int accessible(Commande *commande){
@@ -173,4 +148,13 @@ int accessible(Commande *commande){
     return 1;
   else
     return 0;
+}
+
+void fixDirectory(Commande *commande, Niveau *niveau){
+  commande->directory = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
+  char *temp = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
+
+  getcwd(commande->directory, TAILLE_MAX_COMMANDE);
+  temp = strstr(commande->directory, niveau->nom);
+  strcpy(commande->directory, temp);
 }

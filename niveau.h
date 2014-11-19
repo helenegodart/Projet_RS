@@ -23,6 +23,7 @@ struct ListeString
 typedef struct Niveau Niveau;
 struct Niveau
 {
+	char *nom;
 	ListeString *charAutorise;
 	char *phraseMystere;
 };
@@ -31,7 +32,7 @@ struct Niveau
 ListeString *initialisationString(char *c);
 
 // Crée un niveau à partir du fichier passé en paramètre
-void creerNiveau(char *path, Niveau *niveau);
+void creerNiveau(char *path, Niveau *niveau, char *nomNiveau);
 
 // Insère une nouvelle chaine de caractère dans une liste chainee liste
 void insertionString(ListeString *liste, char *string);

@@ -30,6 +30,7 @@ int main(int argc, char const *argv[])
 }
 
 void execution(Commande *commande, Niveau *niveau){
+	fixDirectory(commande, niveau);
 	int nbArgument = nbArg(commande->commande);
 	int ok = 1;
 	// printf("commande : %s\n", commande->commande);
@@ -70,7 +71,7 @@ void execution(Commande *commande, Niveau *niveau){
 						printf("\"%s\" est un fichier !!\n", listeArg->premier->string);
 					else{
 						chdir(listeArg->premier->string);
-						sprintf(commande->directory, "%s/%s", commande->directory, listeArg->premier->string);
+						fixDirectory(commande, niveau);
 						commande->niveau = commande->niveau + incrementNiveau(commande);
 					}
 				}else
@@ -131,7 +132,7 @@ void execution(Commande *commande, Niveau *niveau){
 }
 
 void debutLigne(Commande *commande){
-	fprintf(stderr,"%s > ", commande->directory);
+	fprintf(stdout,"%s > ", commande->directory);
 }
 
 void descriptifNiveau(Niveau *niveau){
