@@ -105,6 +105,8 @@ void execution(Commande *commande, Niveau *niveau){
 		// commandes autres que cd avec argument(s)
 		else
 		{
+			int fd[2];
+			pipe(fd);
 			int status;
 			int pid = fork();
 		    if (pid == -1)
@@ -117,14 +119,13 @@ void execution(Commande *commande, Niveau *niveau){
 		    	char **tab = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*nbArgument);
 		    	creeTabArgs(tab, listeArg, nbArgument);
 		        execvp(tab[0], tab);
-		        // printf("execution de %s\n", commande->commande);
 		        exit(0);
 		    }else
 		    {
 		        waitpid(pid, &status, WCONTINUED);
 		        if (WIFEXITED(status))
 		        {
-		              
+		        	
 		        }
 		    }
 		}

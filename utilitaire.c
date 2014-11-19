@@ -139,7 +139,6 @@ int incrementNiveau(Commande *commande){
       cpt--;
     }
   }
-  printf("nombreAvancee : %d\n", (cpt));
   return cpt;
 }
 
