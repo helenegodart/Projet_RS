@@ -4,6 +4,7 @@
 #include <string.h>
 #include "niveau.h"
 #include "exit.h"
+#include "paul.h"
 #include "utilitaire.h"
 #include "terminal.h"
 
@@ -84,6 +85,9 @@ void execution(Commande *commande, Niveau *niveau){
 		// gestion du pwd
 		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
 			pwd(commande);
+		// Gestion de >>
+		else if(isRedirector(commande))
+			redirection(commande);
 		// Commandes sans argument
 		else if (nbArgument == 0)
 		{
