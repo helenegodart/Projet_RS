@@ -120,6 +120,10 @@ int incrementNiveau(Commande *commande){
 
   strcpy(chaine, commande->commande);
 
+  // Si on commence à partir de la racine, interdire
+  if (!strcmp(substr(chaine, 3, 4), "/"))
+    return -1000;
+
   int i, length = strlen(chaine);
   temp = strtok(chaine, "/");
   if(!(!strcmp(substr(temp, 3, strlen(temp)-1), ".."))){
@@ -160,4 +164,12 @@ void fixDirectory(Commande *commande, Niveau *niveau){
 
 void pwd(Commande *commande){
   printf("%s\n", commande->directory);
+}
+
+void goBackRoot(Commande *commande){
+  int i, count = commande->niveau;
+  for (i = 0; i < count; ++i)
+  {
+    chdir("..");
+  }
 }

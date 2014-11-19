@@ -43,3 +43,6 @@ void fixDirectory(Commande *commande, Niveau *niveau);
 
 // Affiche le working directory
 void pwd(Commande *commande);
+
+// Retourne à la racine du niveau
+void goBackRoot(Commande *commande);

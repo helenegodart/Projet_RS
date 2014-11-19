@@ -77,8 +77,9 @@ void execution(Commande *commande, Niveau *niveau){
 					}
 				}else
 					printf("Le répertoire \"%s\" n'existe pas !!\n", listeArg->premier->string);
-			}else
-				printf("La commande \"cd\" prend un argument !!\n");
+			}else{
+				goBackRoot(commande);
+			}
 		}
 		// gestion du pwd
 		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
