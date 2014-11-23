@@ -80,6 +80,24 @@ char *deleteSpaces(char *chain){
     return newChain;
 }
 
-void choixNiveau(char *argv[]){
-	
+char *choixNiveau(int argc, char *argv[]){
+	if (argc != 2)
+	{
+		printf("Il faut donner en argument (seulement) l'archive du niveau !\n");
+		exit(EXIT_FAILURE);
+	}else{
+		char *temp = malloc(strlen(argv[1])*sizeof(char));
+		char *tar, *gz;
+		strcpy(temp, argv[1]);
+		char *nom = malloc(strlen(argv[1])*sizeof(char));
+		nom = strtok(temp, ".");
+		tar = strtok(NULL, ".");
+		gz = strtok(NULL, ".");
+		if (!strcmp(tar, "tar") && !strcmp(gz, "gz"))
+			return nom;
+		else{
+			printf("Il faut une archive en .tar.gz !!\n");
+			exit(EXIT_FAILURE);
+		}
+	}
 }

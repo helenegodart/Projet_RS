@@ -16,4 +16,4 @@ char *deleteSpaces(char *chain);
 void writeFile(Commande *commande, char *token);
 
 // Ouvrir le niveau donné en argument de la ligne de commande + vérifications
-void choixNiveau(char *argv[]);
+char *choixNiveau(int argc, char *argv[]);

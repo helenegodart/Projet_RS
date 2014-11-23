@@ -8,7 +8,7 @@
 #include "utilitaire.h"
 #include "terminal.h"
 
-int main(int argc, char const *argv[])
+int main(int argc, char *argv[])
 {
 	int continuer = 1;
 
@@ -16,7 +16,7 @@ int main(int argc, char const *argv[])
 	initialiseCommande(commande);
 
 	Niveau niveau;
-	decompression(choixNiveau(argv), commande, &niveau);
+	decompression(choixNiveau(argc, argv), commande, &niveau);
 	// decompression("niveau1", commande, &niveau);
 
 	while(continuer){
