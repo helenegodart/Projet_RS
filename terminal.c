@@ -83,7 +83,7 @@ void execution(Commande *commande, Niveau *niveau){
 			pwd(commande);
 		// Gestion de >>
 		else if(isRedirector(commande) > 0){
-			redirection(commande);
+			redirection(commande, isRedirector(commande));
 		}
 		// Commandes sans argument
 		else if (nbArgument == 0)
