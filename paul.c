@@ -14,33 +14,74 @@
 
 int isRedirector(Commande *commande){
 	if(strstr(commande->commande, ">>") != NULL)
-		return 1;
+		return ENVOI_W;
+	else if(strstr(commande->commande, ">") != NULL)
+		return ENVOI_WR;
+	else if(strstr(commande->commande, "<<") != NULL)
+		return RECOI_W;
+	else if(strstr(commande->commande, "<") != NULL)
+		return RECOI_WR;
 	else
-		return 0;
+		return -1;
 }
 
-void redirection(Commande *commande){
-	// int fd[2];
-	// pipe(fd);
-	// int status;
-	// int pid = fork();
- //    if (pid == -1)
- //    {
- //        fprintf(stderr, "Erreur fork\n");
- //        exit(EXIT_FAILURE);
- //    }
- //    if(pid == 0)
- //    {
- //    	char **tab = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*nbArgument);
- //    	creeTabArgs(tab, listeArg, nbArgument);
- //        execvp(tab[0], tab);
- //        exit(0);
- //    }else
- //    {
- //        waitpid(pid, &status, WCONTINUED);
- //        if (WIFEXITED(status))
- //        {
-        	
- //        }
- //    }
+void redirection(Commande *commande, int mode){	
+	if (mode == ENVOI_W)
+	{
+		printf("ENVOI_W\n");
+		writeFile(commande, ">>");
+	}
+	else if (mode == ENVOI_WR)
+	{
+		printf("ENVOI_WR\n");
+		writeFile(commande, ">");
+	}
+}
+
+void writeFile(Commande *commande, char *token){
+	char *fichier = malloc(sizeof(char)*strlen(commande->commande));
+	char *ligne = malloc(sizeof(char)*strlen(commande->commande));
+	strcpy(ligne, commande->commande);
+	char *temp = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	char *com = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	com = strtok(ligne, token);
+	fichier = strtok(NULL, token);
+	fichier = deleteSpaces(fichier);
+	FILE *f = NULL;
+
+	if(!strcmp(token, ">>"))
+		f = fopen(fichier, "a");
+	else if(!strcmp(token, ">"))
+		f = fopen(fichier, "w");
+
+	Commande *newCommande = malloc(sizeof(newCommande));
+	initialiseCommande(newCommande);
+	strcpy(newCommande->commande, com);
+	strcpy(newCommande->directory, commande->directory);
+	newCommande->niveau = commande->niveau;
+
+	if (f == NULL)
+	{
+		printf("erreur ouverture %s\n", fichier);
+		exit(EXIT_FAILURE);
+	}else{
+		ListeString *listeArg = malloc(sizeof(ListeString));
+		buildArgsChain(listeArg, newCommande);
+		char *result = exec(listeArg, newCommande);
+		fputs(result, f);
+		fclose(f);
+	}
+}
+
+char *deleteSpaces(char *chain){
+    char *newChain = malloc(strlen(chain)*sizeof(char)+1);
+    int i, j = 0;
+
+    for(i=0;i<strlen(chain)+1;i++){
+    	if(chain[i] != ' ')
+        {
+           newChain[j++] = chain[i];
+        }
+    }
+    return newChain;
 }

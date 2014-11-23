@@ -35,6 +35,7 @@ void execution(Commande *commande, Niveau *niveau){
 	fixDirectory(commande, niveau);
 	int nbArgument = nbArg(commande);
 	int ok = 1;
+	int redirect = 1;
 	// printf("commande : %s\n", commande->commande);
 	// printf("nb arg : %d\n", nbArgument);
 	exceptionProcessing(commande);
@@ -82,33 +83,10 @@ void execution(Commande *commande, Niveau *niveau){
 		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
 			pwd(commande);
 		// Gestion de >>
-		else if(isRedirector(commande) > 0){
-			redirection(commande, isRedirector(commande));
+		else if((redirect = isRedirector(commande)) > 0){
+			redirection(commande, redirect);
 		}
-		// Commandes sans argument
-		else if (nbArgument == 0)
-		{
-			int status;
-			int pid = fork();
-		    if (pid == -1)
-		    {
-		        fprintf(stderr, "Erreur fork\n");
-		        exit(EXIT_FAILURE);
-		    }
-		    if(pid == 0)
-		    {
-		    	execlp(commande->commande, commande->commande, NULL);
-		        exit(0);
-		    }else
-		    {
-		        waitpid(pid, &status, WCONTINUED);
-		        if (WIFEXITED(status))
-		        {
-		              
-		        }
-		    }
-		}
-		// commandes autres que cd avec argument(s)
+		// commandes autres
 		else
 		{
 			printf("%s", exec(listeArg, commande));
@@ -165,13 +143,24 @@ char *exec(ListeString *listeArg, Commande *commande){
     }
     if(pid == 0)
     {
-    	char **tab = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*nbArgument);
-    	creeTabArgs(tab, listeArg, nbArgument);
-    	close(fd[0]);
-	   	dup2(fd[1], 1);
-	   	close(fd[1]);
-        execvp(tab[0], tab);
-        exit(0);
+    	if (nbArgument == 0)
+		{
+			close(fd[0]);
+		   	dup2(fd[1], 1);
+		   	close(fd[1]);
+		   	strcpy(commande->commande, deleteSpaces(commande->commande));
+			execlp(commande->commande, commande->commande, NULL);
+		}else{
+	    	char **tab = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*nbArgument);
+	    	creeTabArgs(tab, listeArg, nbArgument);
+	    	close(fd[0]);
+		   	dup2(fd[1], 1);
+		   	close(fd[1]);
+		   	strcpy(tab[0], deleteSpaces(tab[0]));
+	        execvp(tab[0], tab);
+	        free(tab);
+	    }
+	    exit(0);
     }else
     {
         waitpid(pid, &status, WCONTINUED);

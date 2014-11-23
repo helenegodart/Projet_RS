@@ -166,7 +166,6 @@ int incrementNiveau(Commande *commande){
       cpt--;
     }
   }
-  fprintf(stderr, "incrementNiveau : %d\n", cpt);
   return cpt;
 }
 

@@ -29,7 +29,7 @@ struct Niveau
 };
 
 // Initialise une liste de String
-ListeString *initialisationString(char *c);
+void initialisationString(ListeString *liste, char *c);
 
 // Crée un niveau à partir du fichier passé en paramètre
 void creerNiveau(char *path, Niveau *niveau, char *nomNiveau);
