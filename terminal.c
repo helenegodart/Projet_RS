@@ -111,7 +111,7 @@ void execution(Commande *commande, Niveau *niveau){
 		// commandes autres que cd avec argument(s)
 		else
 		{
-			exec(listeArg, commande);
+			printf("%s", exec(listeArg, commande));
 		}
 	}
 }
@@ -152,7 +152,7 @@ void exceptionProcessing(Commande *commande){
 	ifExit(commande);
 }
 
-void exec(ListeString *listeArg, Commande *commande){
+char *exec(ListeString *listeArg, Commande *commande){
 	int nbArgument = nbArg(commande);
 	int fd[2];
 	pipe(fd);
@@ -179,7 +179,9 @@ void exec(ListeString *listeArg, Commande *commande){
         {
         	char *sortie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
         	read(fd[0], sortie, TAILLE_MAX_COMMANDE*200);
-        	printf("%s", sortie);
+        	return sortie;
         }
+        else
+        	return NULL;
     }
 }
