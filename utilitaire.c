@@ -11,13 +11,36 @@
 #include <errno.h>
 
 char *substr(char *src,int pos,int len) { 
-  char *dest=NULL;                        
-  if (len>0) {                          
-    dest = calloc(len+1, 1);       
-    if(NULL != dest)
-        strncat(dest,src+pos,len);            
-  }                                       
-  return dest;                            
+  // char *dest=NULL;                        
+  // if (len>0) {                          
+  //   dest = calloc(len+1, 1);       
+  //   if(NULL != dest)
+  //       strncat(dest,src+pos,len);            
+  // }                                       
+  // return dest;  
+  char *pointer;
+   int c;
+ 
+   pointer = malloc(len+1);
+ 
+   if (pointer == NULL)
+   {
+      printf("Unable to allocate memory.\n");
+      exit(EXIT_FAILURE);
+   }
+ 
+   for (c = 0 ; c < pos  ; c++) 
+      src++; 
+ 
+   for (c = 0 ; c < len ; c++)
+   {
+      *(pointer+c) = *src;      
+      src++;   
+   }
+ 
+   *(pointer+c) = '\0';
+ 
+   return pointer;                          
 }
 
 int fileExists(char *path){
