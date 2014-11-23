@@ -82,7 +82,7 @@ void execution(Commande *commande, Niveau *niveau){
 		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
 			pwd(commande);
 		// Gestion de >>
-		else if(isRedirector(commande)){
+		else if(isRedirector(commande) > 0){
 			redirection(commande);
 		}
 		// Commandes sans argument
