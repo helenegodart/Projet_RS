@@ -16,9 +16,8 @@ int main(int argc, char const *argv[])
 	initialiseCommande(commande);
 
 	Niveau niveau;
-	// creerNiveau("niveau1", &niveau);
-	// descriptifNiveau(&niveau);
-	decompression("niveau1", commande, &niveau);
+	decompression(choixNiveau(argv), commande, &niveau);
+	// decompression("niveau1", commande, &niveau);
 
 	while(continuer){
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));

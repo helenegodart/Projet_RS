@@ -27,15 +27,9 @@ int isRedirector(Commande *commande){
 
 void redirection(Commande *commande, int mode){	
 	if (mode == ENVOI_W)
-	{
-		printf("ENVOI_W\n");
 		writeFile(commande, ">>");
-	}
 	else if (mode == ENVOI_WR)
-	{
-		printf("ENVOI_WR\n");
 		writeFile(commande, ">");
-	}
 }
 
 void writeFile(Commande *commande, char *token){
@@ -84,4 +78,8 @@ char *deleteSpaces(char *chain){
         }
     }
     return newChain;
+}
+
+void choixNiveau(char *argv[]){
+	
 }
