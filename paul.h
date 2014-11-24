@@ -7,13 +7,16 @@
 int isRedirector(Commande *commande);
 
 // Gère la commande >>
-void redirection(Commande *commande, int mode);
+void redirection(Niveau *niveau, Commande *commande, int mode);
 
 // Supprime espaces
 char *deleteSpaces(char *chain);
 
 // Write in a file (command >> || <<)
-void writeFile(Commande *commande, char *token);
+void writeFile(Niveau *niveau, Commande *commande, char *token);
 
 // Ouvrir le niveau donné en argument de la ligne de commande + vérifications
 char *choixNiveau(int argc, char *argv[]);
+
+// Vérifie que la sortie est bien la phrase à trouver
+void verification(char *sortie, Niveau *niveau);

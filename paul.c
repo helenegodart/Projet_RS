@@ -25,14 +25,14 @@ int isRedirector(Commande *commande){
 		return -1;
 }
 
-void redirection(Commande *commande, int mode){	
+void redirection(Niveau *niveau, Commande *commande, int mode){	
 	if (mode == ENVOI_W)
-		writeFile(commande, ">>");
+		writeFile(niveau, commande, ">>");
 	else if (mode == ENVOI_WR)
-		writeFile(commande, ">");
+		writeFile(niveau, commande, ">");
 }
 
-void writeFile(Commande *commande, char *token){
+void writeFile(Niveau *niveau, Commande *commande, char *token){
 	char *fichier = malloc(sizeof(char)*strlen(commande->commande));
 	char *ligne = malloc(sizeof(char)*strlen(commande->commande));
 	strcpy(ligne, commande->commande);
@@ -61,7 +61,7 @@ void writeFile(Commande *commande, char *token){
 	}else{
 		ListeString *listeArg = malloc(sizeof(ListeString));
 		buildArgsChain(listeArg, newCommande);
-		char *result = exec(listeArg, newCommande);
+		char *result = exec(listeArg, newCommande, niveau);
 		fputs(result, f);
 		fclose(f);
 	}
@@ -93,11 +93,20 @@ char *choixNiveau(int argc, char *argv[]){
 		nom = strtok(temp, ".");
 		tar = strtok(NULL, ".");
 		gz = strtok(NULL, ".");
-		if (!strcmp(tar, "tar") && !strcmp(gz, "gz"))
+		if ((!strcmp(tar, "tar") && !strcmp(gz, "gz")) || !strcmp(tar, "tgz"))
 			return nom;
 		else{
 			printf("Il faut une archive en .tar.gz !!\n");
 			exit(EXIT_FAILURE);
 		}
+	}
+}
+
+void verification(char *sortie, Niveau *niveau){
+	char *test = malloc(sizeof(char)*strlen(sortie));
+
+	if((test = strstr(sortie, niveau->phraseMystere)) != NULL){
+		printf("NIVEAU REUSSI !!\n");
+		exit(EXIT_SUCCESS);	
 	}
 }

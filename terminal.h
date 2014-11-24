@@ -1,7 +1,7 @@
 
 
 // Ecrit le working directory plus ">"
-void debutLigne(Commande *commande);
+void debutLigne(Commande *commande, Niveau *niveau);
 
 // printf le descriptif du niveau : commandes autorisée + but à atteindre
 void descriptifNiveau(Niveau *niveau);
@@ -19,4 +19,4 @@ void determinationArgs(ListeString *liste, Commande *commande);
 void exceptionProcessing(Commande *commande);
 
 // Lance l'exécution d'une commande (appel execlp + fork + pipe..), renvoi la réponse
-char *exec(ListeString *listeArg, Commande *commande);
+char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau);

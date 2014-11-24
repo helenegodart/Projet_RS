@@ -182,7 +182,11 @@ void fixDirectory(Commande *commande, Niveau *niveau){
 
   getcwd(commande->directory, TAILLE_MAX_COMMANDE);
   temp = strstr(commande->directory, niveau->nom);
-  strcpy(commande->directory, temp);
+
+  if(temp == NULL)
+    strcpy(commande->directory, niveau->nom);
+  else
+    strcpy(commande->directory, temp);
 }
 
 void pwd(Commande *commande){

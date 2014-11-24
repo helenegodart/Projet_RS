@@ -15,27 +15,25 @@ int main(int argc, char *argv[])
 	Commande *commande = malloc(sizeof(commande));
 	initialiseCommande(commande);
 
-	Niveau niveau;
-	decompression(choixNiveau(argc, argv), commande, &niveau);
-	// decompression("niveau1", commande, &niveau);
+	Niveau *niveau = malloc(sizeof(niveau));
+	decompression(choixNiveau(argc, argv), commande, niveau);
 
 	while(continuer){
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
-		debutLigne(commande);
+		debutLigne(commande, niveau);
 		fgets(saisie, TAILLE_MAX_COMMANDE, stdin);
 		clean(saisie);
 		strcpy(commande->commande, saisie);
-		execution(commande, &niveau);
+		execution(commande, niveau);
 		}
 	return 0;
 }
 
 void execution(Commande *commande, Niveau *niveau){
-	fixDirectory(commande, niveau);
+	// fixDirectory(commande, niveau);
 	int nbArgument = nbArg(commande);
 	int ok = 1;
 	int redirect = 1;
-	// printf("commande : %s\n", commande->commande);
 	// printf("nb arg : %d\n", nbArgument);
 	exceptionProcessing(commande);
 	// Vérifie si la commande est autorisée dans ce niveau
@@ -83,17 +81,18 @@ void execution(Commande *commande, Niveau *niveau){
 			pwd(commande);
 		// Gestion de >>
 		else if((redirect = isRedirector(commande)) > 0){
-			redirection(commande, redirect);
+			redirection(niveau, commande, redirect);
 		}
 		// commandes autres
 		else
 		{
-			printf("%s", exec(listeArg, commande));
+			printf("%s", exec(listeArg, commande, niveau));
 		}
 	}
 }
 
-void debutLigne(Commande *commande){
+void debutLigne(Commande *commande, Niveau *niveau){
+	fixDirectory(commande, niveau);
 	fprintf(stdout,"%s > ", commande->directory);
 }
 
@@ -129,7 +128,7 @@ void exceptionProcessing(Commande *commande){
 	ifExit(commande);
 }
 
-char *exec(ListeString *listeArg, Commande *commande){
+char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
 	int nbArgument = nbArg(commande);
 	int fd[2];
 	pipe(fd);
@@ -167,6 +166,7 @@ char *exec(ListeString *listeArg, Commande *commande){
         {
         	char *sortie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
         	read(fd[0], sortie, TAILLE_MAX_COMMANDE*200);
+        	verification(sortie, niveau);
         	return sortie;
         }
         else

@@ -11,7 +11,7 @@
 
 void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
 {
-    int premierPassage = 1;
+    int premierPassage = 1, continuer = 1;
     FILE* fichier = NULL;
     
     fichier = fopen(path, "r");
@@ -26,10 +26,13 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
         exit(EXIT_FAILURE);
     }else
     {
+        int i = 0;
         fgets(ligne, TAILLE_MAX_COMMANDE, fichier);
         indicateur = substr(ligne, 0, 1);
-        while(!(!strcmp(indicateur, "-"))){
-            string = substr(ligne, 2, strlen(ligne)-3);
+        while(continuer){
+            if (!(!strcmp(ligne, "\n")))
+            {
+                string = substr(ligne, 2, strlen(ligne)-3);
                 if (!strcmp(indicateur, "$"))
                 {
                     if (premierPassage)
@@ -49,14 +52,16 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
                 else if (!strcmp(indicateur, ">"))
                 {
                 	niveau->phraseMystere = string;
+                    continuer = 0;
                 }
                 else{
                 	fprintf(stderr,"Fichier corrompu !\n"); 
                     exit(EXIT_FAILURE);
                 }
+            }
                 
-                fgets(ligne, TAILLE_MAX_COMMANDE, fichier);
-                indicateur = substr(ligne, 0, 1);
+            fgets(ligne, TAILLE_MAX_COMMANDE, fichier);
+            indicateur = substr(ligne, 0, 1);
         }
  
         fclose(fichier);
@@ -97,9 +102,20 @@ void insertionString(ListeString *liste, char *string){
 }
 
 void decompression(char *nom, Commande *commande, Niveau *niveau){
+    char *nomNiveau = malloc(sizeof(char)*strlen(nom)+4);
     char *decompresse = malloc(sizeof(char)*(strlen(nom)+7));
     int status;
     sprintf(decompresse, "%s.tar.gz", nom);
+
+    if (!fileExists(decompresse))
+    {
+        decompresse = malloc(sizeof(char)*(strlen(nom)+7));
+        sprintf(decompresse, "%s.tgz", nom);
+        if (!fileExists(decompresse))
+        {
+            printf("Ouverture \"%s\" impossible !!\n", decompresse);
+        }
+    }
     
     int pid = fork();
     if (pid == -1)
@@ -116,13 +132,15 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
         waitpid(pid, &status, WCONTINUED);
         if (WIFEXITED(status))
         {
-            chdir(nom);
+            // chdir(nom);
             strcat(commande->directory, nom);
             commande->niveau = 0;
             // execlp("ls", "ls", NULL);
-            creerNiveau("meta", niveau, nom);
+            strcpy(nomNiveau, nom);
+            creerNiveau("meta", niveau, nomNiveau);
             // descriptifNiveau(niveau);
             remove("meta");   
         }
     }
+    free(decompresse);
 }

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+trap "echo Interrupted!" SIGINT SIGTERM
+
+echo "Entering an infinite loop"
+while true ; do
+  :
+done
