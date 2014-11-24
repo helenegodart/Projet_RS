@@ -30,63 +30,68 @@ int main(int argc, char *argv[])
 }
 
 void execution(Commande *commande, Niveau *niveau){
-	// fixDirectory(commande, niveau);
+	fixDirectory(commande, niveau);
 	int nbArgument = nbArg(commande);
 	int ok = 1;
 	int redirect = 1;
 	// printf("nb arg : %d\n", nbArgument);
 	exceptionProcessing(commande);
-	// Vérifie si la commande est autorisée dans ce niveau
-	if (!appartient(premierArg(commande->commande), niveau->charAutorise))
-	{
-		printf("Commande \"%s\" interdite !!\n", premierArg(commande->commande));
-		printf("Liste des commandes autorisées :\n");
-		String *temp = niveau->charAutorise->premier;
-		printf("\t %s\n", temp->string);
-		
-		while((temp = temp->suivant) != NULL){
-			printf("\t %s\n", temp->string);
-		}
-	}
+	// Vérifie que la commande ne soit pas vide
+	if (strlen(commande->commande) > 0){}
 	else
 	{
-		ListeString *listeArg = malloc(sizeof(ListeString));
-		buildArgsChain(listeArg, commande);
-
-		// Gestion particulière du cd
-		if (!strcmp(substr(commande->commande,0,2), "cd"))
+		// Vérifie si la commande est autorisée dans ce niveau
+		if (!appartient(premierArg(commande->commande), niveau->charAutorise))
 		{
-			// Vérifie qu'il n'y a qu'un seul argument après le cd
-			if (nbArgument == 1)
-			{
-				// Vérifie que le dossier visé existe et qu'il n'est pas un fichier et qu'il n'est pas au-dessus de la racine
-				if (dirExists(listeArg->premier->string) && accessible(commande))
-				{
-					// Vérifie que ce n'est pas un fichier 
-					if(fileExists(listeArg->premier->string))
-						printf("\"%s\" est un fichier !!\n", listeArg->premier->string);
-					else{
-						chdir(listeArg->premier->string);
-						fixDirectory(commande, niveau);
-						commande->niveau = commande->niveau + incrementNiveau(commande);
-					}
-				}else
-					printf("Le répertoire \"%s\" n'existe pas !!\n", listeArg->premier->string);
-			}else{
-				goBackRoot(commande);
+			printf("Commande \"%s\" interdite !!\n", premierArg(commande->commande));
+			printf("Liste des commandes autorisées :\n");
+			String *temp = niveau->charAutorise->premier;
+			printf("\t %s\n", temp->string);
+			
+			while((temp = temp->suivant) != NULL){
+				printf("\t %s\n", temp->string);
 			}
 		}
-		// gestion du pwd
-		else if (!strcmp(substr(commande->commande,0,3), "pwd"))
-			pwd(commande);
-		// Gestion de >>
-		else if((redirect = isRedirector(commande)) > 0){
-			redirection(niveau, commande, redirect);
-		}
-		// commandes autres
 		else
 		{
-			printf("%s", exec(listeArg, commande, niveau));
+			ListeString *listeArg = malloc(sizeof(ListeString));
+			buildArgsChain(listeArg, commande);
+
+			// Gestion particulière du cd
+			if (!strcmp(substr(commande->commande,0,2), "cd"))
+			{
+				// Vérifie qu'il n'y a qu'un seul argument après le cd
+				if (nbArgument == 1)
+				{
+					// Vérifie que le dossier visé existe et qu'il n'est pas un fichier et qu'il n'est pas au-dessus de la racine
+					if (dirExists(listeArg->premier->string) && accessible(commande))
+					{
+						// Vérifie que ce n'est pas un fichier 
+						if(fileExists(listeArg->premier->string))
+							printf("\"%s\" est un fichier !!\n", listeArg->premier->string);
+						else{
+							chdir(listeArg->premier->string);
+							fixDirectory(commande, niveau);
+							commande->niveau = commande->niveau + incrementNiveau(commande);
+						}
+					}else
+						printf("Le répertoire \"%s\" n'existe pas !!\n", listeArg->premier->string);
+				}else{
+					goBackRoot(commande);
+				}
+			}
+			// gestion du pwd
+			else if (!strcmp(substr(commande->commande,0,3), "pwd"))
+				pwd(commande);
+			// Gestion de >>
+			else if((redirect = isRedirector(commande)) > 0){
+				redirection(niveau, commande, redirect);
+			}
+			// commandes autres
+			else
+			{
+				printf("%s", exec(listeArg, commande, niveau));
+			}
 		}
 	}
 }
@@ -109,8 +114,8 @@ void descriptifNiveau(Niveau *niveau){
 }
 
 void initialiseCommande(Commande *c){
-	c->commande = malloc(sizeof(char));
-	c->directory = malloc(sizeof(char));
+	c->commande = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	c->directory = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
 }
 
 void determinationArgs(ListeString *liste, Commande *commande){

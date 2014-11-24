@@ -68,48 +68,39 @@ void writeFile(Niveau *niveau, Commande *commande, char *token){
 
 void readFile(Niveau *niveau, Commande *commande, char *token){
 	printf("RECOI_W\n");
-	char *fichier = malloc(sizeof(char)*strlen(commande->commande));
-	Commande *newCommande = malloc(sizeof(newCommande));
-	strcat(fichier, findFileName(fichier, commande, newCommande, token));
+	char *ligne = malloc(sizeof(char)*strlen(commande->commande));
+	char *com = malloc(sizeof(char)*strlen(commande->commande));
+	char *file = malloc(sizeof(char)*strlen(commande->commande));
 
-	if (!fileExists(fichier))
+	Commande *newCommande = malloc(sizeof(newCommande));
+	initialiseCommande(newCommande);
+	strcpy(newCommande->directory, commande->directory);
+	newCommande->niveau = commande->niveau;
+	
+	strcpy(ligne, commande->commande);
+	ligne = deleteSpaces(ligne);
+	com = strtok(ligne, "<");
+	file = strtok(NULL, "<");
+	sprintf(ligne, "%s %s", com, file);
+	fprintf(stderr, "com : |%s| ; file : |%s|\ncommande : %s\n",com, file, ligne );
+	// strcat(fichier, findFileName(fichier, commande, newCommande, token));
+
+	strcpy(newCommande->commande, com);
+	if (!fileExists(file))
 	{
-		fprintf(stderr, "fichier \"%s\" inexistant !!\n", fichier);
+		fprintf(stderr, "fichier \"%s\" inexistant !!\n", file);
 	}
 	else
 	{
-		// IL FAUT JUSTE ENLEVER LE SIGNE < DE LA COMMANDE ET EXECUTER
-		// FILE *f = NULL;
-		// f = fopen(fichier, "r");
-		// if(f == NULL)
-		// 	fprintf(stderr, "Erreur d'ouverture !!\n");
-		// else{
-		// 	ListeString *listeArg = malloc(sizeof(ListeString));
-		// 	char *argument = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-		// 	strcpy(argument, fichier);
-
-		// 	// char * ligne = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-		// 	// while((fgets(ligne, TAILLE_MAX_COMMANDE, f)) != NULL)
-		// 	// 	strcat(argument, ligne);
-
-		// 	insertionString(listeArg, newCommande->commande);
-		// 	insertionString(listeArg, argument);
-		// 	String *s = malloc(sizeof(s));
-		// 	s = listeArg->premier;
-		// 	fprintf(stderr, "\t%s\n", s->string);
-		// 	while((s = s->suivant) != NULL)
-		// 		fprintf(stderr, "\t%s\n", s->string);
-
-		// 	fprintf(stderr, "%s\n", exec(listeArg, newCommande, niveau));
-
-			
-		// 	fclose(f);
-		// 	free(argument);
-
-			// free(ligne);
-		}
+		
+		ListeString *listeArg = malloc(sizeof(ListeString));
+		buildArgsChain(listeArg, newCommande);
+		fprintf(stderr, "commande, %s\n", newCommande->commande);
+		fprintf(stderr, "%s\n", exec(listeArg, newCommande, niveau));
+		free(ligne);
 	}
-	free(fichier);
+	free(com);
+	free(file);
 	free(newCommande);	
 }
 
