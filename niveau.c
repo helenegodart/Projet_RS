@@ -106,10 +106,9 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
     char *decompresse = malloc(sizeof(char)*(strlen(nom)+7));
     int status;
     sprintf(decompresse, "%s.tar.gz", nom);
-
+    
     if (!fileExists(decompresse))
     {
-        decompresse = malloc(sizeof(char)*(strlen(nom)+7));
         sprintf(decompresse, "%s.tgz", nom);
         if (!fileExists(decompresse))
         {
