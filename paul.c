@@ -30,17 +30,16 @@ void redirection(Niveau *niveau, Commande *commande, int mode){
 		writeFile(niveau, commande, ">>");
 	else if (mode == ENVOI_WR)
 		writeFile(niveau, commande, ">");
+	else if(mode == RECOI_WR)
+		readFile(niveau, commande, "<");
+
 }
 
 void writeFile(Niveau *niveau, Commande *commande, char *token){
 	char *fichier = malloc(sizeof(char)*strlen(commande->commande));
-	char *ligne = malloc(sizeof(char)*strlen(commande->commande));
-	strcpy(ligne, commande->commande);
-	char *temp = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-	char *com = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-	com = strtok(ligne, token);
-	fichier = strtok(NULL, token);
-	fichier = deleteSpaces(fichier);
+	Commande *newCommande = malloc(sizeof(newCommande));
+	strcpy(fichier, findFileName(fichier, commande, newCommande, token));
+	
 	FILE *f = NULL;
 
 	if(!strcmp(token, ">>"))
@@ -48,11 +47,8 @@ void writeFile(Niveau *niveau, Commande *commande, char *token){
 	else if(!strcmp(token, ">"))
 		f = fopen(fichier, "w");
 
-	Commande *newCommande = malloc(sizeof(newCommande));
-	initialiseCommande(newCommande);
-	strcpy(newCommande->commande, com);
-	strcpy(newCommande->directory, commande->directory);
-	newCommande->niveau = commande->niveau;
+	
+	
 
 	if (f == NULL)
 	{
@@ -64,7 +60,74 @@ void writeFile(Niveau *niveau, Commande *commande, char *token){
 		char *result = exec(listeArg, newCommande, niveau);
 		fputs(result, f);
 		fclose(f);
+		free(listeArg);
 	}
+	free(fichier);
+	free(newCommande);
+}
+
+void readFile(Niveau *niveau, Commande *commande, char *token){
+	printf("RECOI_W\n");
+	char *fichier = malloc(sizeof(char)*strlen(commande->commande));
+	Commande *newCommande = malloc(sizeof(newCommande));
+	strcat(fichier, findFileName(fichier, commande, newCommande, token));
+
+	if (!fileExists(fichier))
+	{
+		fprintf(stderr, "fichier \"%s\" inexistant !!\n", fichier);
+	}
+	else
+	{
+		// IL FAUT JUSTE ENLEVER LE SIGNE < DE LA COMMANDE ET EXECUTER
+		// FILE *f = NULL;
+		// f = fopen(fichier, "r");
+		// if(f == NULL)
+		// 	fprintf(stderr, "Erreur d'ouverture !!\n");
+		// else{
+		// 	ListeString *listeArg = malloc(sizeof(ListeString));
+		// 	char *argument = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+		// 	strcpy(argument, fichier);
+
+		// 	// char * ligne = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+		// 	// while((fgets(ligne, TAILLE_MAX_COMMANDE, f)) != NULL)
+		// 	// 	strcat(argument, ligne);
+
+		// 	insertionString(listeArg, newCommande->commande);
+		// 	insertionString(listeArg, argument);
+		// 	String *s = malloc(sizeof(s));
+		// 	s = listeArg->premier;
+		// 	fprintf(stderr, "\t%s\n", s->string);
+		// 	while((s = s->suivant) != NULL)
+		// 		fprintf(stderr, "\t%s\n", s->string);
+
+		// 	fprintf(stderr, "%s\n", exec(listeArg, newCommande, niveau));
+
+			
+		// 	fclose(f);
+		// 	free(argument);
+
+			// free(ligne);
+		}
+	}
+	free(fichier);
+	free(newCommande);	
+}
+
+char *findFileName(char *fichier, Commande *commande, Commande *newCommande, char *token){
+	char *ligne = malloc(sizeof(char)*strlen(commande->commande));
+	strcpy(ligne, commande->commande);
+	char *temp = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	char *com = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	com = strtok(ligne, token);
+	fichier = strtok(NULL, token);
+	fichier = deleteSpaces(fichier);
+
+	initialiseCommande(newCommande);
+	strcpy(newCommande->commande, com);
+	strcpy(newCommande->directory, commande->directory);
+	newCommande->niveau = commande->niveau;
+
+	return fichier;
 }
 
 char *deleteSpaces(char *chain){
@@ -96,7 +159,7 @@ char *choixNiveau(int argc, char *argv[]){
 		if ((!strcmp(tar, "tar") && !strcmp(gz, "gz")) || !strcmp(tar, "tgz"))
 			return nom;
 		else{
-			printf("Il faut une archive en .tar.gz !!\n");
+			printf("Il faut une archive en .tar.gz ou en .tgz !!\n");
 			exit(EXIT_FAILURE);
 		}
 	}
