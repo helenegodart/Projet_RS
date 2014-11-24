@@ -5,6 +5,7 @@ struct Commande{
 	char *directory;
 	char *commande;
 	int niveau;
+	int pid;
 };
 
 typedef struct String String;

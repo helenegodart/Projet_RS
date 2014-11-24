@@ -2,11 +2,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <signal.h>
 #include "niveau.h"
 #include "exit.h"
 #include "paul.h"
 #include "utilitaire.h"
 #include "terminal.h"
+
+void test(){
+	fprintf(stderr, "test\n");
+}
+
+void hdl (int sig, siginfo_t *siginfo, void *context)
+{
+	printf ("Sending PID: %ld, UID: %ld\n",	(long)siginfo->si_pid, (long)siginfo->si_uid);
+	printf("SIGINT\n");
+}
 
 int main(int argc, char *argv[])
 {
@@ -14,9 +25,32 @@ int main(int argc, char *argv[])
 
 	Commande *commande = malloc(sizeof(commande));
 	initialiseCommande(commande);
+	// signal(SIGINT, interrupt);
 
 	Niveau *niveau = malloc(sizeof(niveau));
 	decompression(choixNiveau(argc, argv), commande, niveau);
+
+
+	/***
+	*/
+
+
+	struct sigaction act;
+ 
+	memset (&act, '\0', sizeof(act));
+ 
+	/* Use the sa_sigaction field because the handles has two additional parameters */
+	act.sa_sigaction = &hdl;
+ 
+	/* The SA_SIGINFO flag tells sigaction() to use the sa_sigaction field, not sa_handler. */
+	act.sa_flags = SA_SIGINFO;
+ 
+	if (sigaction(SIGINT, &act, NULL) < 0) {
+		perror ("sigaction");
+		return 1;
+	}
+	/****
+	*/
 
 	while(continuer){
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
@@ -116,6 +150,7 @@ void descriptifNiveau(Niveau *niveau){
 void initialiseCommande(Commande *c){
 	c->commande = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
 	c->directory = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	c->pid = getpid();
 }
 
 void determinationArgs(ListeString *liste, Commande *commande){
@@ -139,6 +174,7 @@ char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
 	pipe(fd);
 	int status;
 	pid_t pid = fork();
+	commande->pid = pid;
     if (pid == -1)
     {
         fprintf(stderr, "Erreur fork\n");
@@ -169,6 +205,7 @@ char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
         waitpid(pid, &status, WCONTINUED);
         if (WIFEXITED(status))
         {
+        	commande->pid = getpid();
         	char *sortie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
         	read(fd[0], sortie, TAILLE_MAX_COMMANDE*200);
         	verification(sortie, niveau);
