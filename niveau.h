@@ -39,3 +39,6 @@ void insertionString(ListeString *liste, char *string);
 
 // Décompresse l'archive tar.gz du niveau et le crée 
 void decompression(char *nom, Commande *commande, Niveau *niveau);
+
+// Copier un fichier
+int copier_fichier(char *source, char *destination);

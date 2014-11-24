@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <sys/wait.h>
 #include <errno.h>
 #include "niveau.h"
@@ -115,31 +116,67 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
             printf("Ouverture \"%s\" impossible !!\n", decompresse);
         }
     }
-    
-    int pid = fork();
-    if (pid == -1)
-    {
-        fprintf(stderr, "Erreur fork\n");
+
+    if(mkdir(nom, 0777) < 0){
+        fprintf(stderr, "Erreur de création du dossier \"%s\"\n", nom);
         exit(EXIT_FAILURE);
     }
-    if(pid == 0)
-    {
-        execlp("tar", "tar", "-xf", decompresse, NULL);
-        exit(0);
-    }else
-    {
-        waitpid(pid, &status, WCONTINUED);
-        if (WIFEXITED(status))
+    else
+    {   char *dest = malloc(sizeof(char)*strlen(decompresse)+strlen(nom));
+        sprintf(dest, "%s/%s", nom, decompresse);
+        copier_fichier(decompresse, dest);
+        chdir(nom);
+        int pid = fork();
+        if (pid == -1)
         {
-            // chdir(nom);
-            strcat(commande->directory, nom);
-            commande->niveau = 0;
-            // execlp("ls", "ls", NULL);
-            strcpy(nomNiveau, nom);
-            creerNiveau("meta", niveau, nomNiveau);
-            // descriptifNiveau(niveau);
-            remove("meta");   
+            fprintf(stderr, "Erreur fork\n");
+            exit(EXIT_FAILURE);
         }
+        if(pid == 0)
+        {
+            execlp("tar", "tar", "-xf", decompresse, NULL);
+            exit(0);
+        }else
+        {
+            waitpid(pid, &status, WCONTINUED);
+            if (WIFEXITED(status))
+            {
+                strcat(commande->directory, nom);
+                commande->niveau = 0;
+                // execlp("ls", "ls", NULL);
+                strcpy(nomNiveau, nom);
+                creerNiveau("meta", niveau, nomNiveau);
+                // descriptifNiveau(niveau);
+                remove("meta");
+            }
+        }
+        free(decompresse);
     }
-    free(decompresse);
+}
+
+int copier_fichier(char *source, char *destination) 
+{ 
+    FILE* fSrc; 
+    FILE* fDest; 
+    char buffer[512]; 
+    int NbLus; 
+  
+    if ((fSrc = fopen(source, "rb")) == NULL) 
+    { 
+        return -1; 
+    } 
+  
+    if ((fDest = fopen(destination, "wb")) == NULL) 
+    { 
+        fclose(fSrc); 
+        return -2; 
+    } 
+  
+    while ((NbLus = fread(buffer, 1, 512, fSrc)) != 0) 
+        fwrite(buffer, 1, NbLus, fDest); 
+  
+    fclose(fDest); 
+    fclose(fSrc); 
+  
+    return 0; 
 }
