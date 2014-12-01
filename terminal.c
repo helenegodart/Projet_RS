@@ -71,7 +71,7 @@ void execution(Commande *commande, Niveau *niveau){
 	// printf("nb arg : %d\n", nbArgument);
 	exceptionProcessing(commande);
 	// Vérifie que la commande ne soit pas vide
-	if (strlen(commande->commande) > 0){}
+	if (strlen(commande->commande) == 0){}
 	else
 	{
 		// Vérifie si la commande est autorisée dans ce niveau
@@ -118,9 +118,8 @@ void execution(Commande *commande, Niveau *niveau){
 			else if (!strcmp(substr(commande->commande,0,3), "pwd"))
 				pwd(commande);
 			// Gestion de >>
-			else if((redirect = isRedirector(commande)) > 0){
+			else if((redirect = isRedirector(commande)) > 0)
 				redirection(niveau, commande, redirect);
-			}
 			// commandes autres
 			else
 			{
@@ -169,6 +168,7 @@ void exceptionProcessing(Commande *commande){
 }
 
 char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
+	fprintf(stderr, "exec\n");
 	int nbArgument = nbArg(commande);
 	int fd[2];
 	pipe(fd);
