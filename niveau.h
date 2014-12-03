@@ -27,6 +27,7 @@ struct Niveau
 	char *nom;
 	ListeString *charAutorise;
 	char *phraseMystere;
+	char *consigne;
 };
 
 // Initialise une liste de String
