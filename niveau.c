@@ -43,21 +43,25 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
                         premierPassage = 0;
                     }else
                     {
-                    insertionString(niveau->charAutorise, string);
+                  	insertionString(niveau->charAutorise, string);
                     }
                 }
                 else if (!strcmp(indicateur, "#"))
                 {
-                    //Ne rien faire, c'est un commentaire
+                  	//Ne rien faire, c'est un commentaire
                 }
                 else if (!strcmp(indicateur, ">"))
                 {
                 	niveau->phraseMystere = string;
-                    continuer = 0;
+                    	continuer = 0;
                 }
+		else if (!strcmp(indicateur, "&"))
+		{
+			niveau->consigne = string;
+		}	
                 else{
                 	fprintf(stderr,"Fichier corrompu !\n"); 
-                    exit(EXIT_FAILURE);
+                	exit(EXIT_FAILURE);
                 }
             }
                 
