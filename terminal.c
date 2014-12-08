@@ -9,14 +9,19 @@
 #include "utilitaire.h"
 #include "terminal.h"
 
+extern int child_pid = -1;
+
 void test(){
 	fprintf(stderr, "test\n");
 }
 
 void hdl (int sig, siginfo_t *siginfo, void *context)
 {
-	printf ("Sending PID: %ld, UID: %ld\n",	(long)siginfo->si_pid, (long)siginfo->si_uid);
-	printf("SIGINT\n");
+	if (kill(child_pid, 0))
+	{
+		fprintf(stderr, "fils trouvé\n");
+		kill(child_pid, SIGINT);
+	}
 }
 
 int main(int argc, char *argv[])
@@ -176,6 +181,7 @@ char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
 	int status;
 	pid_t pid = fork();
 	commande->pid = pid;
+	child_pid = commande->pid;
     if (pid == -1)
     {
         fprintf(stderr, "Erreur fork\n");
