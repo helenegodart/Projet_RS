@@ -174,7 +174,6 @@ void exceptionProcessing(Commande *commande){
 }
 
 char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
-	fprintf(stderr, "exec\n");
 	int nbArgument = nbArg(commande);
 	int fd[2];
 	pipe(fd);

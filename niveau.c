@@ -55,10 +55,10 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
                 	niveau->phraseMystere = string;
                     	continuer = 0;
                 }
-		else if (!strcmp(indicateur, "&"))
-		{
-			niveau->consigne = string;
-		}	
+        		else if (!strcmp(indicateur, "&"))
+        		{
+        			niveau->consigne = string;
+        		}	
                 else{
                 	fprintf(stderr,"Fichier corrompu !\n"); 
                 	exit(EXIT_FAILURE);
