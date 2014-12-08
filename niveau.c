@@ -156,6 +156,7 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
                 remove("meta");
             }
         }
+        remove(decompresse);
         free(decompresse);
     }
 }

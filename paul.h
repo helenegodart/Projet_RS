@@ -26,3 +26,9 @@ void verification(char *sortie, Niveau *niveau);
 
 // Renvoi le nom du fichier contenu dans string
 char *findFileName(char *fichier, Commande *commande, Commande *newCommande, char *token);
+
+// Autocomplétion
+void autoComplete(Commande *commande, Niveau *niveau);
+
+// Traite l'appui sur la touche tab
+void ifTab(Commande *commande);

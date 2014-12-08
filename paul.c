@@ -164,3 +164,14 @@ void verification(char *sortie, Niveau *niveau){
 		exit(EXIT_SUCCESS);	
 	}
 }
+
+void autoComplete(Commande *commande, Niveau *niveau){
+
+}
+
+void ifTab(Commande *commande){
+	if (strstr(commande->commande, "\t") != NULL)
+	{
+		fprintf(stderr, "ifTab\n");
+	}
+}

@@ -3,29 +3,30 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
+#include <SDL/SDL.h>
 #include "niveau.h"
 #include "exit.h"
 #include "paul.h"
 #include "utilitaire.h"
 #include "terminal.h"
 
-extern int child_pid = -1;
-
-void test(){
-	fprintf(stderr, "test\n");
-}
+extern int child_pid = -42;
 
 void hdl (int sig, siginfo_t *siginfo, void *context)
 {
 	if (kill(child_pid, 0))
-	{
-		fprintf(stderr, "fils trouvé\n");
+	{	
 		kill(child_pid, SIGINT);
 	}
 }
 
 int main(int argc, char *argv[])
 {
+	SDL_Init(0);
+	if((SDL_InitSubSystem(SDL_INIT_EVENTTHREAD)==-1)) { 
+        printf("Could not initialize SDL: %s.\n", SDL_GetError());
+        exit(-1);
+    }
 	int continuer = 1;
 
 	Commande *commande = malloc(sizeof(commande));
@@ -57,14 +58,29 @@ int main(int argc, char *argv[])
 	/****
 	*/
 
+	SDL_Event event;
+
 	while(continuer){
+		// SDL_WaitEvent(&event);
+		// if (event.type == SDL_KEYDOWN)
+		// {
+		// 	printf("SDL_KEYDOWN\n");
+		// 	if (event.key.keysym.sym == SDLK_TAB)
+		// 	{
+		// 		fprintf(stderr,"TAB\n");
+		// 	}
+		// 	else if (event.key.keysym.sym == SDLK_ESCAPE)
+		// 	{
+		// 		continuer = 0;
+		// 	}
+		// }
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
 		debutLigne(commande, niveau);
 		fgets(saisie, TAILLE_MAX_COMMANDE, stdin);
 		clean(saisie);
 		strcpy(commande->commande, saisie);
 		execution(commande, niveau);
-		}
+	}
 	return 0;
 }
 
@@ -171,6 +187,7 @@ void determinationArgs(ListeString *liste, Commande *commande){
 
 void exceptionProcessing(Commande *commande){
 	ifExit(commande);
+	ifTab(commande);
 }
 
 char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
