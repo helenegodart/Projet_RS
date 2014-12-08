@@ -166,7 +166,6 @@ int copier_fichier(char *source, char *destination)
     FILE* fDest; 
     char buffer[1024]; 
     int NbLus; 
-    fprintf(stderr, "dest : |%s|\n", destination);
   
     if ((fSrc = fopen(source, "rb")) == NULL) 
     { 
@@ -179,13 +178,8 @@ int copier_fichier(char *source, char *destination)
         return -2; 
     } 
   
-    // while ((NbLus = fread(buffer, 1, 1024, fSrc)) != 0) 
-    //     fwrite(buffer, 1, NbLus, fDest); 
-  
-    int c;
-
-    while ((c = getc(fSrc)) != EOF)
-        putc(c, fDest);
+    while ((NbLus = fread(buffer, 1, 1024, fSrc)) != 0) 
+        fwrite(buffer, 1, NbLus, fDest); 
 
     fclose(fDest); 
     fclose(fSrc); 

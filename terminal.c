@@ -131,8 +131,8 @@ void execution(Commande *commande, Niveau *niveau){
 
 void debutLigne(Commande *commande, Niveau *niveau){
 	fixDirectory(commande, niveau);
+	fprintf(stdout, "CONSIGNE : %s\n", niveau->consigne);
 	fprintf(stdout,"%s > ", commande->directory);
-	fprintf(stdout, "Consigne : %s > ", niveau->consigne);
 }
 
 void descriptifNiveau(Niveau *niveau){
