@@ -114,6 +114,8 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
     
     if (!fileExists(decompresse))
     {
+        free(decompresse);
+        decompresse = malloc(sizeof(char)*(strlen(nom)+7));
         sprintf(decompresse, "%s.tgz", nom);
         if (!fileExists(decompresse))
         {
@@ -126,7 +128,7 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
         exit(EXIT_FAILURE);
     }
     else
-    {   char *dest = malloc(sizeof(char)*strlen(decompresse)+strlen(nom));
+    {   char *dest = malloc(sizeof(char)*(strlen(decompresse)+strlen(nom)+5));
         sprintf(dest, "%s/%s", nom, decompresse);
         copier_fichier(decompresse, dest);
         chdir(nom);
@@ -162,8 +164,9 @@ int copier_fichier(char *source, char *destination)
 { 
     FILE* fSrc; 
     FILE* fDest; 
-    char buffer[512]; 
+    char buffer[1024]; 
     int NbLus; 
+    fprintf(stderr, "dest : |%s|\n", destination);
   
     if ((fSrc = fopen(source, "rb")) == NULL) 
     { 
@@ -176,9 +179,14 @@ int copier_fichier(char *source, char *destination)
         return -2; 
     } 
   
-    while ((NbLus = fread(buffer, 1, 512, fSrc)) != 0) 
-        fwrite(buffer, 1, NbLus, fDest); 
+    // while ((NbLus = fread(buffer, 1, 1024, fSrc)) != 0) 
+    //     fwrite(buffer, 1, NbLus, fDest); 
   
+    int c;
+
+    while ((c = getc(fSrc)) != EOF)
+        putc(c, fDest);
+
     fclose(fDest); 
     fclose(fSrc); 
   
