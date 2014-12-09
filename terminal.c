@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 {
 	// SDL_Init(0);
 	// if((SDL_InitSubSystem(SDL_INIT_EVENTTHREAD)==-1)) { 
- //        printf("Could not initialize SDL: %s.\n", SDL_GetError());
+ //        printw("Could not initialize SDL: %s.\n", SDL_GetError());
  //        exit(-1);
  //    }
 	int continuer = 1;
@@ -60,27 +60,35 @@ int main(int argc, char *argv[])
 
 	// SDL_Event event;
 
-	while(continuer){
-		// SDL_PollEvent(&event);
-		// if (event.type == SDL_KEYDOWN)
-		// {
-		// 	printf("SDL_KEYDOWN\n");
-		// 	if (event.key.keysym.sym == SDLK_TAB)
-		// 	{
-		// 		fprintf(stderr,"TAB\n");
-		// 	}
-		// 	else if (event.key.keysym.sym == SDLK_ESCAPE)
-		// 	{
-		// 		continuer = 0;
-		// 	}
-		// }
+	char ch;
+	int finCommande = 0;
+	initscr();
+	cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+    intrflush(stdscr, FALSE);
+
+	while(continuer){      
+		finCommande = 0;
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
 		debutLigne(commande, niveau);
-		fgets(saisie, TAILLE_MAX_COMMANDE, stdin);
-		clean(saisie);
+		while(finCommande == 0){
+			ch = wgetch(stdscr);
+        	if(ch == '\n'){
+        		finCommande = 1;
+        		printw("\n");
+        	}
+        	else{
+        		printw("%c", ch);
+        		sprintf(saisie, "%s%c", saisie, ch);
+        	}
+		}		
+		// fgets(saisie, TAILLE_MAX_COMMANDE, stdin);
+		// clean(saisie);
 		strcpy(commande->commande, saisie);
 		execution(commande, niveau);
 	}
+	endwin();
 	return 0;
 }
 
@@ -89,7 +97,7 @@ void execution(Commande *commande, Niveau *niveau){
 	int nbArgument = nbArg(commande);
 	int ok = 1;
 	int redirect = 1;
-	// printf("nb arg : %d\n", nbArgument);
+	// printw("nb arg : %d\n", nbArgument);
 	exceptionProcessing(commande);
 	// Vérifie que la commande ne soit pas vide
 	if (strlen(commande->commande) == 0){}
@@ -98,13 +106,13 @@ void execution(Commande *commande, Niveau *niveau){
 		// Vérifie si la commande est autorisée dans ce niveau
 		if (!appartient(premierArg(commande->commande), niveau->charAutorise))
 		{
-			printf("Commande \"%s\" interdite !!\n", premierArg(commande->commande));
-			printf("Liste des commandes autorisées :\n");
+			printw("Commande \"%s\" interdite !!\n", premierArg(commande->commande));
+			printw("Liste des commandes autorisées :\n");
 			String *temp = niveau->charAutorise->premier;
-			printf("\t %s\n", temp->string);
+			printw("\t %s\n", temp->string);
 			
 			while((temp = temp->suivant) != NULL){
-				printf("\t %s\n", temp->string);
+				printw("\t %s\n", temp->string);
 			}
 		}
 		else
@@ -123,14 +131,14 @@ void execution(Commande *commande, Niveau *niveau){
 					{
 						// Vérifie que ce n'est pas un fichier 
 						if(fileExists(listeArg->premier->string))
-							printf("\"%s\" est un fichier !!\n", listeArg->premier->string);
+							printw("\"%s\" est un fichier !!\n", listeArg->premier->string);
 						else{
 							chdir(listeArg->premier->string);
 							fixDirectory(commande, niveau);
 							commande->niveau = commande->niveau + incrementNiveau(commande);
 						}
 					}else
-						printf("Le répertoire \"%s\" n'existe pas !!\n", listeArg->premier->string);
+						printw("Le répertoire \"%s\" n'existe pas !!\n", listeArg->premier->string);
 				}else{
 					goBackRoot(commande);
 				}
@@ -144,7 +152,7 @@ void execution(Commande *commande, Niveau *niveau){
 			// commandes autres
 			else
 			{
-				printf("%s", exec(listeArg, commande, niveau));
+				printw("%s", exec(listeArg, commande, niveau));
 			}
 		}
 	}
@@ -152,20 +160,20 @@ void execution(Commande *commande, Niveau *niveau){
 
 void debutLigne(Commande *commande, Niveau *niveau){
 	fixDirectory(commande, niveau);
-	fprintf(stdout, "CONSIGNE : %s\n", niveau->consigne);
-	fprintf(stdout,"%s > ", commande->directory);
+	wprintw(stdscr, "CONSIGNE : %s\n", niveau->consigne);
+	wprintw(stdscr,"%s > ", commande->directory);
 }
 
 void descriptifNiveau(Niveau *niveau){
-	printf("DESCRIPTIF fichier meta\n");
+	printw("DESCRIPTIF fichier meta\n");
 	String *temp = niveau->charAutorise->premier;
-	printf("charAutorise :\n\t %s\n", temp->string);
+	printw("charAutorise :\n\t %s\n", temp->string);
 	
 	while((temp = temp->suivant) != NULL){
-		printf("\t %s\n", temp->string);
+		printw("\t %s\n", temp->string);
 	}
 
-	printf("Solution : %s\n", niveau->phraseMystere);
+	printw("Solution : %s\n", niveau->phraseMystere);
 }
 
 void initialiseCommande(Commande *c){
@@ -200,7 +208,7 @@ char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
 	child_pid = commande->pid;
     if (pid == -1)
     {
-        fprintf(stderr, "Erreur fork\n");
+        wprintw(stdscr, "Erreur fork\n");
         exit(EXIT_FAILURE);
     }
     if(pid == 0)

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ncurses.h>
 #include "niveau.h"
 #include "terminal.h"
 #include <sys/types.h>
@@ -52,7 +53,8 @@ void writeFile(Niveau *niveau, Commande *commande, char *token){
 
 	if (f == NULL)
 	{
-		printf("erreur ouverture %s\n", fichier);
+		printw("erreur ouverture %s\n", fichier);
+		endwin();
 		exit(EXIT_FAILURE);
 	}else{
 		ListeString *listeArg = malloc(sizeof(ListeString));
@@ -67,7 +69,7 @@ void writeFile(Niveau *niveau, Commande *commande, char *token){
 }
 
 void readFile(Niveau *niveau, Commande *commande, char *token){
-	printf("RECOI_W\n");
+	printw("RECOI_W\n");
 	char *ligne = malloc(sizeof(char)*strlen(commande->commande));
 	char *com = malloc(sizeof(char)*strlen(commande->commande));
 	char *file = malloc(sizeof(char)*strlen(commande->commande));
@@ -82,21 +84,21 @@ void readFile(Niveau *niveau, Commande *commande, char *token){
 	com = strtok(ligne, "<");
 	file = strtok(NULL, "<");
 	sprintf(ligne, "%s %s", com, file);
-	fprintf(stderr, "com : |%s| ; file : |%s|\ncommande : %s\n",com, file, ligne );
+	wprintw(stdscr, "com : |%s| ; file : |%s|\ncommande : %s\n",com, file, ligne );
 	// strcat(fichier, findFileName(fichier, commande, newCommande, token));
 
 	strcpy(newCommande->commande, com);
 	if (!fileExists(file))
 	{
-		fprintf(stderr, "fichier \"%s\" inexistant !!\n", file);
+		wprintw(stdscr, "fichier \"%s\" inexistant !!\n", file);
 	}
 	else
 	{
 		
 		ListeString *listeArg = malloc(sizeof(ListeString));
 		buildArgsChain(listeArg, newCommande);
-		fprintf(stderr, "commande, %s\n", newCommande->commande);
-		fprintf(stderr, "%s\n", exec(listeArg, newCommande, niveau));
+		wprintw(stdscr, "commande, %s\n", newCommande->commande);
+		wprintw(stdscr, "%s\n", exec(listeArg, newCommande, niveau));
 		free(ligne);
 	}
 	free(com);
@@ -137,7 +139,8 @@ char *deleteSpaces(char *chain){
 char *choixNiveau(int argc, char *argv[]){
 	if (argc != 2)
 	{
-		printf("Il faut donner en argument (seulement) l'archive du niveau !\n");
+		printw("Il faut donner en argument (seulement) l'archive du niveau !\n");
+		endwin();
 		exit(EXIT_FAILURE);
 	}else{
 		char *temp = malloc(strlen(argv[1])*sizeof(char));
@@ -150,7 +153,8 @@ char *choixNiveau(int argc, char *argv[]){
 		if ((!strcmp(tar, "tar") && !strcmp(gz, "gz")) || !strcmp(tar, "tgz"))
 			return nom;
 		else{
-			printf("Il faut une archive en .tar.gz ou en .tgz !!\n");
+			printw("Il faut une archive en .tar.gz ou en .tgz !!\n");
+			endwin();
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -160,7 +164,8 @@ void verification(char *sortie, Niveau *niveau){
 	char *test = malloc(sizeof(char)*strlen(sortie));
 
 	if((test = strstr(sortie, niveau->phraseMystere)) != NULL){
-		printf("NIVEAU REUSSI !!\n");
+		printw("NIVEAU REUSSI !!\n");
+		endwin();
 		exit(EXIT_SUCCESS);	
 	}
 }
@@ -172,6 +177,6 @@ void autoComplete(Commande *commande, Niveau *niveau){
 void ifTab(Commande *commande){
 	if (strstr(commande->commande, "\t") != NULL)
 	{
-		fprintf(stderr, "ifTab\n");
+		wprintw(stdscr, "ifTab\n");
 	}
 }

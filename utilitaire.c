@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <ncurses.h>
 #include <string.h>
 #include "niveau.h"
 #include "terminal.h"
@@ -25,7 +26,8 @@ char *substr(char *src,int pos,int len) {
  
    if (pointer == NULL)
    {
-      printf("Unable to allocate memory.\n");
+      printw("Unable to allocate memory.\n");
+      endwin();
       exit(EXIT_FAILURE);
    }
  
@@ -117,7 +119,7 @@ int search(char *chaine, char c){
 }
 
 void remonterDossier(Commande *commande){
-  printf("remonterDossier\n");
+  printw("remonterDossier\n");
   int indice = search(commande->directory, '/');
   commande->directory = substr(commande->directory, 0, strlen(commande->directory)-indice-2);
 }
@@ -151,15 +153,15 @@ int incrementNiveau(Commande *commande){
   temp = strtok(chaine, "/");
   if(!(!strcmp(substr(temp, 3, strlen(temp)-1), ".."))){
     cpt++;
-    // printf("%s|\n", substr(temp, 3, strlen(temp)-1));
+    // printw("%s|\n", substr(temp, 3, strlen(temp)-1));
   }
   else if (!strcmp(substr(temp, 3, strlen(temp)-1), ".."))
   {
     cpt--;
-    // printf("%s|\n", substr(temp, 3, strlen(temp)-1));
+    // printw("%s|\n", substr(temp, 3, strlen(temp)-1));
   }
   while((temp = strtok(NULL, "/")) != NULL){
-    // printf("%s|\n", temp);
+    // printw("%s|\n", temp);
     if (!(!strcmp(temp, "..")))
       cpt++;
     else if(!strcmp(temp, "..")){
@@ -190,7 +192,7 @@ void fixDirectory(Commande *commande, Niveau *niveau){
 }
 
 void pwd(Commande *commande){
-  printf("%s\n", commande->directory);
+  printw("%s\n", commande->directory);
 }
 
 void goBackRoot(Commande *commande){

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ncurses.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -23,7 +24,8 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
 
     if (fichier == NULL)
     {
-        printf("Erreur ouverture fichier !\nFichier \"%s\" inexistant !\n", path);
+        printw("Erreur ouverture fichier !\nFichier \"%s\" inexistant !\n", path);
+        endwin();
         exit(EXIT_FAILURE);
     }else
     {
@@ -60,7 +62,8 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
         			niveau->consigne = string;
         		}	
                 else{
-                	fprintf(stderr,"Fichier corrompu !\n"); 
+                	wprintw(stdscr,"Fichier corrompu !\n"); 
+                    endwin();
                 	exit(EXIT_FAILURE);
                 }
             }
@@ -81,6 +84,7 @@ void initialisationString(ListeString *liste, char *c){
 
     if (liste == NULL || string == NULL)
     {
+        endwin();
         exit(EXIT_FAILURE);
     }
 
@@ -95,13 +99,14 @@ void insertionString(ListeString *liste, char *string){
 
     if (liste == NULL || nouveau == NULL)
     {
+        endwin();
         exit(EXIT_FAILURE);
     }
     nouveau->string = string;
 
     /* Insertion de l'élément au début de la liste */
-    // printf("liste->premier : %s\n", liste->premier->string);
-    // printf("nouveau->suivant : %s\n", nouveau->suivant->string);
+    // printw("liste->premier : %s\n", liste->premier->string);
+    // printw("nouveau->suivant : %s\n", nouveau->suivant->string);
     nouveau->suivant = liste->premier;
     liste->premier = nouveau;
 }
@@ -119,12 +124,13 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
         sprintf(decompresse, "%s.tgz", nom);
         if (!fileExists(decompresse))
         {
-            printf("Ouverture \"%s\" impossible !!\n", decompresse);
+            printw("Ouverture \"%s\" impossible !!\n", decompresse);
         }
     }
 
     if(mkdir(nom, 0777) < 0){
-        fprintf(stderr, "Erreur de création du dossier \"%s\"\n", nom);
+        wprintw(stdscr, "Erreur de création du dossier \"%s\"\n", nom);
+        endwin();
         exit(EXIT_FAILURE);
     }
     else
@@ -135,7 +141,8 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
         int pid = fork();
         if (pid == -1)
         {
-            fprintf(stderr, "Erreur fork\n");
+            wprintw(stdscr, "Erreur fork\n");
+            endwin();
             exit(EXIT_FAILURE);
         }
         if(pid == 0)
