@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
-#include <SDL/SDL.h>
+#include <ncurses.h>
 #include "niveau.h"
 #include "exit.h"
 #include "paul.h"
@@ -22,11 +22,11 @@ void hdl (int sig, siginfo_t *siginfo, void *context)
 
 int main(int argc, char *argv[])
 {
-	SDL_Init(0);
-	if((SDL_InitSubSystem(SDL_INIT_EVENTTHREAD)==-1)) { 
-        printf("Could not initialize SDL: %s.\n", SDL_GetError());
-        exit(-1);
-    }
+	// SDL_Init(0);
+	// if((SDL_InitSubSystem(SDL_INIT_EVENTTHREAD)==-1)) { 
+ //        printf("Could not initialize SDL: %s.\n", SDL_GetError());
+ //        exit(-1);
+ //    }
 	int continuer = 1;
 
 	Commande *commande = malloc(sizeof(commande));
@@ -58,10 +58,10 @@ int main(int argc, char *argv[])
 	/****
 	*/
 
-	SDL_Event event;
+	// SDL_Event event;
 
 	while(continuer){
-		// SDL_WaitEvent(&event);
+		// SDL_PollEvent(&event);
 		// if (event.type == SDL_KEYDOWN)
 		// {
 		// 	printf("SDL_KEYDOWN\n");
