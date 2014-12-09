@@ -22,11 +22,6 @@ void hdl (int sig, siginfo_t *siginfo, void *context)
 
 int main(int argc, char *argv[])
 {
-	// SDL_Init(0);
-	// if((SDL_InitSubSystem(SDL_INIT_EVENTTHREAD)==-1)) { 
- //        printw("Could not initialize SDL: %s.\n", SDL_GetError());
- //        exit(-1);
- //    }
 	int continuer = 1;
 
 	Commande *commande = malloc(sizeof(commande));
@@ -58,23 +53,30 @@ int main(int argc, char *argv[])
 	/****
 	*/
 
-	// SDL_Event event;
-
-	char ch;
+	int ch;
 	int finCommande = 0;
 	initscr();
+	idlok(stdscr, TRUE);
+	scrollok(stdscr, TRUE);
 	cbreak();
     noecho();
     keypad(stdscr, TRUE);
     intrflush(stdscr, FALSE);
-
+    int x, y;
 	while(continuer){      
 		finCommande = 0;
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
 		debutLigne(commande, niveau);
 		while(finCommande == 0){
 			ch = wgetch(stdscr);
-        	if(ch == '\n'){
+			if (ch == KEY_BACKSPACE)
+			{
+				getyx(stdscr, y, x);
+				move(y, x-1);
+				delch();
+				strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
+			}
+        	else if(ch == '\n'){
         		finCommande = 1;
         		printw("\n");
         	}
@@ -82,9 +84,7 @@ int main(int argc, char *argv[])
         		printw("%c", ch);
         		sprintf(saisie, "%s%c", saisie, ch);
         	}
-		}		
-		// fgets(saisie, TAILLE_MAX_COMMANDE, stdin);
-		// clean(saisie);
+		}
 		strcpy(commande->commande, saisie);
 		execution(commande, niveau);
 	}
