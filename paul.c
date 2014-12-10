@@ -218,7 +218,7 @@ char *autoComplete(char *saisie, Niveau *niveau){
     char *test = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
     strcpy(saisieCpy, saisie);
     // printw("dernierMot : |%s|", (dernierMot = strtok(saisieCpy, " ")));
-    if((dernierMot = strtok(saisie, " ")) != NULL){
+    if((dernierMot = strtok(saisieCpy, " ")) != NULL){
     	// printw("dernierMot : %s\n", dernierMot);
     	strcpy(test, dernierMot);
     	while((dernierMot = strtok(NULL, " ")) != NULL){
@@ -227,7 +227,7 @@ char *autoComplete(char *saisie, Niveau *niveau){
     	}
     }
     else {
-    	strcpy(dernierMot, saisie);
+    	strcpy(dernierMot, saisieCpy);
     }
     // printw("dernierMot : %s\tsaisieCpy : %s\ttest : %s\n", dernierMot, saisieCpy, test);
     /** Cas à traiter :
@@ -241,11 +241,12 @@ char *autoComplete(char *saisie, Niveau *niveau){
     		continuer = 0;
     	else if(!strcmp(substr(temp->string, 0, strlen(test)), test)){
 
-    		strcpy(test, temp->string);
+    		strcpy(test, substr(temp->string, strlen(test), strlen(temp->string)));
     		continuer = 0;
     		match = 1;
     	}
     }
+    // printw("test : %s\n", test);
     if(match)
 		return test;
 	else
