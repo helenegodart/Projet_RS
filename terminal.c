@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
 	idlok(stdscr, TRUE);
 	scrollok(stdscr, TRUE);
 	cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    intrflush(stdscr, FALSE);
-    int x, y;
+    	noecho();
+    	keypad(stdscr, TRUE);
+    	intrflush(stdscr, FALSE);
+	int x, y;
 	while(continuer){      
 		finCommande = 0;
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
@@ -76,14 +76,29 @@ int main(int argc, char *argv[])
 				delch();
 				strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
 			}
-        	else if(ch == '\n'){
-        		finCommande = 1;
-        		printw("\n");
-        	}
-        	else{
-        		printw("%c", ch);
-        		sprintf(saisie, "%s%c", saisie, ch);
-        	}
+			else if(ch == KEY_LEFT){
+				getyx(stdscr, y, x);
+				move(y, x-1);
+			}
+			else if(ch == KEY_RIGHT){
+				getyx(stdscr, y, x);
+				move(y, x+1);
+			}
+			else if(ch == KEY_DC){
+				delch();
+				strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
+			}
+			else if(ch == '\t'){
+				autoComplete(commande, niveau);
+			}
+        		else if(ch == '\n'){
+        			finCommande = 1;
+        			printw("\n");
+        		}
+        		else{
+        			printw("%c", ch);
+        			sprintf(saisie, "%s%c", saisie, ch);
+        		}
 		}
 		strcpy(commande->commande, saisie);
 		execution(commande, niveau);
