@@ -171,7 +171,35 @@ void verification(char *sortie, Niveau *niveau){
 }
 
 void autoComplete(Commande *commande, Niveau *niveau){
+	//Elaboration de la liste chainee de propositions
+	printw("methode autocomplete\n");
+	ListeString *liste = malloc(sizeof(ListeString));
+	String *temp = malloc(sizeof(String));
+	temp = niveau->charAutorise->premier;
+	initialisationString(liste, temp->string);
+	while((temp = temp->suivant) != NULL){
+		insertionString(liste, temp->string);
+	}
+	printw("fin de charAutorise\n");
+	//préparation de l'appel de la méthode exec
+	ListeString *args = malloc(sizeof(ListeString));
+	Commande *c = malloc(sizeof(Commande ));
+	c->niveau = commande->niveau;
+	c->directory = commande->directory;
+	c->pid = commande->pid;
+	c->commande = "ls";
+	buildArgsChain(args, c);
+	free(temp);
+	temp = malloc(sizeof(String));
+	temp = args->premier;
+	/*printw("temp : %s\n", temp->string);
+	while((temp = temp->suivant) != NULL)
+		printw("temp : %s\n", temp->string);
 
+	printw("commande : %s\n", c->commande);*/
+	//char *ls = exec(args, c, niveau);
+	printw("ls : %s", exec(args, c, niveau));
+	//printw("ls : %s\n", ls);
 }
 
 void ifTab(Commande *commande){
