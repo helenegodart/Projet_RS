@@ -28,7 +28,7 @@ void verification(char *sortie, Niveau *niveau);
 char *findFileName(char *fichier, Commande *commande, Commande *newCommande, char *token);
 
 // Autocomplétion
-void autoComplete(Commande *commande, Niveau *niveau);
+char *autoComplete(char *saisie, Niveau *niveau);
 
 // Traite l'appui sur la touche tab
 void ifTab(Commande *commande);

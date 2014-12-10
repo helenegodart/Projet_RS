@@ -89,16 +89,23 @@ int main(int argc, char *argv[])
 				strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
 			}
 			else if(ch == '\t'){
-				autoComplete(commande, niveau);
+				int i;
+				for(i = 0; i < strlen(saisie); i++){
+					getyx(stdscr, y, x);
+					move(y, x-1);
+					delch();
+				}
+				sprintf(saisie, "%s %s", saisie, autoComplete(saisie, niveau));
+				printw("%s", saisie);
 			}
-        		else if(ch == '\n'){
-        			finCommande = 1;
-        			printw("\n");
-        		}
-        		else{
-        			printw("%c", ch);
-        			sprintf(saisie, "%s%c", saisie, ch);
-        		}
+    		else if(ch == '\n'){
+    			finCommande = 1;
+    			printw("\n");
+    		}
+    		else{
+    			printw("%c", ch);
+    			sprintf(saisie, "%s%c", saisie, ch);
+    		}
 		}
 		strcpy(commande->commande, saisie);
 		execution(commande, niveau);

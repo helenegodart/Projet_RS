@@ -170,9 +170,8 @@ void verification(char *sortie, Niveau *niveau){
 	}
 }
 
-void autoComplete(Commande *commande, Niveau *niveau){
+char *autoComplete(char *saisie, Niveau *niveau){
 	//Elaboration de la liste chainee de propositions
-	printw("methode autocomplete\n");
 	ListeString *liste = malloc(sizeof(ListeString));
 	String *temp = malloc(sizeof(String));
 	temp = niveau->charAutorise->premier;
@@ -180,26 +179,67 @@ void autoComplete(Commande *commande, Niveau *niveau){
 	while((temp = temp->suivant) != NULL){
 		insertionString(liste, temp->string);
 	}
-	printw("fin de charAutorise\n");
-	//préparation de l'appel de la méthode exec
-	ListeString *args = malloc(sizeof(ListeString));
-	Commande *c = malloc(sizeof(Commande ));
-	c->niveau = commande->niveau;
-	c->directory = commande->directory;
-	c->pid = commande->pid;
-	c->commande = "ls";
-	buildArgsChain(args, c);
-	free(temp);
-	temp = malloc(sizeof(String));
-	temp = args->premier;
-	/*printw("temp : %s\n", temp->string);
-	while((temp = temp->suivant) != NULL)
-		printw("temp : %s\n", temp->string);
+	//appel de la méthode exec pour le ls
+	int fd[2];
+	pipe(fd);
+	int status;
+	char *ls = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
+	int pid = fork();
+	if(pid == 0)
+    {
+		close(fd[0]);
+	   	dup2(fd[1], 1);
+	   	close(fd[1]);
+		execlp("ls", "ls", NULL);
+	    exit(0);
+    }else
+    {
+        waitpid(pid, &status, WCONTINUED);
+        if (WIFEXITED(status))
+        {
+        	read(fd[0], ls, TAILLE_MAX_COMMANDE*200);
+        }
+    }
+    char *t = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    t = strtok(ls, "\n");
+    insertionString(liste, t);
+    while((t = strtok(NULL, "\n")) != NULL)
+    	insertionString(liste, t);
 
-	printw("commande : %s\n", c->commande);*/
-	//char *ls = exec(args, c, niveau);
-	printw("ls : %s", exec(args, c, niveau));
-	//printw("ls : %s\n", ls);
+    temp = malloc(sizeof(String));
+    temp = liste->premier;
+    // printw("- %s\n", temp->string);
+    // while((temp = temp->suivant) != NULL)
+    // 	printw("- %s\n", temp->string);
+    int continuer = 1;
+
+    char *dernierMot = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    char *saisieCpy = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    char *test = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    strcpy(saisieCpy, saisie);
+    // printw("dernierMot : |%s|", (dernierMot = strtok(saisieCpy, " ")));
+    if((dernierMot = strtok(saisie, " ")) != NULL){
+    	// printw("dernierMot : %s\n", dernierMot);
+    	strcpy(test, dernierMot);
+    	while((dernierMot = strtok(NULL, " ")) != NULL){
+    		// printw("dernierMot : %s\n", dernierMot);
+    		strcpy(test, dernierMot);
+    	}
+    }
+    else {
+    	strcpy(dernierMot, saisie);
+    }
+    // printw("dernierMot : %s\tsaisieCpy : %s\ttest : %s\n", dernierMot, saisieCpy, test);
+    while(continuer){
+    	if ((temp = temp->suivant) == NULL)
+    		continuer = 0;
+    	else if(strstr(temp->string, test)){
+    		strcpy(test, temp->string);
+    		continuer = 0;
+    	}
+    }
+
+	return test;
 }
 
 void ifTab(Commande *commande){
