@@ -1,4 +1,4 @@
-#define TAILLE_MAX_COMMANDE 200
+#define TAILLE_MAX_COMMANDE 500
 
 typedef struct Commande Commande;
 struct Commande{

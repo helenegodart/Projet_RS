@@ -90,12 +90,15 @@ int main(int argc, char *argv[])
 			}
 			else if(ch == '\t'){
 				int i;
-				for(i = 0; i < strlen(saisie); i++){
+				for(i = 0; i < strlen(saisie)+1; i++){
 					getyx(stdscr, y, x);
 					move(y, x-1);
 					delch();
+					printw("del\n");
 				}
-				sprintf(saisie, "%s %s", saisie, autoComplete(saisie, niveau));
+				// sprintf(saisie, "%s%s", saisie, autoComplete(saisie, niveau));
+				/** il faut que la fonction autocomplète ne renvoi que ce qui manque et pas la commande entière !*/
+				strcat(saisie, autoComplete(saisie, niveau));
 				printw("%s", saisie);
 			}
     		else if(ch == '\n'){

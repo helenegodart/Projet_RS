@@ -230,16 +230,26 @@ char *autoComplete(char *saisie, Niveau *niveau){
     	strcpy(dernierMot, saisie);
     }
     // printw("dernierMot : %s\tsaisieCpy : %s\ttest : %s\n", dernierMot, saisieCpy, test);
+    /** Cas à traiter :
+    	une lettre est incluse dans le mot mais n'est pas le commencement (a dans cat)
+    	deux fichiers qui commencent pareil, n'afficher que ce qui est commun aux deux
+    */
+    int match = 0, x, y;
+
     while(continuer){
     	if ((temp = temp->suivant) == NULL)
     		continuer = 0;
-    	else if(strstr(temp->string, test)){
+    	else if(!strcmp(substr(temp->string, 0, strlen(test)), test)){
+
     		strcpy(test, temp->string);
     		continuer = 0;
+    		match = 1;
     	}
     }
-
-	return test;
+    if(match)
+		return test;
+	else
+		return "";
 }
 
 void ifTab(Commande *commande){
