@@ -229,7 +229,7 @@ char *autoComplete(char *saisie, Niveau *niveau){
     else {
     	strcpy(dernierMot, saisieCpy);
     }
-    // printw("dernierMot : %s\tsaisieCpy : %s\ttest : %s\n", dernierMot, saisieCpy, test);
+    ListeString *results = malloc(sizeof(ListeString));
     /** Cas à traiter :
     	une lettre est incluse dans le mot mais n'est pas le commencement (a dans cat)
     	deux fichiers qui commencent pareil, n'afficher que ce qui est commun aux deux
@@ -237,18 +237,50 @@ char *autoComplete(char *saisie, Niveau *niveau){
     int match = 0, x, y;
 
     while(continuer){
-    	if ((temp = temp->suivant) == NULL)
+    	if ((temp->suivant) != NULL){
+    		temp = temp->suivant;
+			if(!strcmp(substr(temp->string, 0, strlen(test)), test) ){
+				// strcpy(test, substr(temp->string, strlen(test), strlen(temp->string)));
+				if(!match)
+					initialisationString(results, temp->string);
+				else
+					insertionString(results, temp->string);
+				match = 1;
+    		}
+    	}else{
     		continuer = 0;
-    	else if(!strcmp(substr(temp->string, 0, strlen(test)), test)){
-
-    		strcpy(test, substr(temp->string, strlen(test), strlen(temp->string)));
-    		continuer = 0;
-    		match = 1;
+    		temp->suivant = liste->premier;
     	}
     }
-    // printw("test : %s\n", test);
+
+
+
+    // printw("results : \n");
+    temp = malloc(sizeof(String));
+    temp = results->premier;
+    test = malloc(sizeof(String));
+    int fin = 0, i = 0;
+    // printw("\t %s\n", temp->string);
+    // while(!fin){
+    // 	if(temp->suivant != NULL){
+    // 		temp = temp->suivant;
+    // 		if(temp = results->premier){
+    // 			i++;
+    // 			strcpy(test, substr(results->premier->string, 0, i));
+    // 		}
+    // 		if(strstr(temp->string, test) == NULL){
+    // 			sprintf(test, "%s", substr(test, 0, strlen(test)-1));
+    // 			fin = 1;
+    // 		}
+	   //  	// strcpy(test, strstr(results->premier->string, temp->string));
+	   //  	// printw("t : %s\nt : %s\ncomposé : %s", results->premier->string, temp->string, strstr(results->premier->string, temp->string));
+    // 	}else
+    // 		temp->suivant = results->premier;
+    // }
+
+    printw("\ntest : %s\n", test);
     if(match)
-		return test;
+		return "_";
 	else
 		return "";
 }
