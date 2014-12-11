@@ -171,6 +171,11 @@ void verification(char *sortie, Niveau *niveau){
 }
 
 char *autoComplete(char *saisie, Niveau *niveau){
+	// Si la chaine est vide faire un ls
+	if(strlen(saisie) == 0){
+		printw("\n%s", ls());
+		return "";
+	}
 	//Elaboration de la liste chainee de propositions
 	ListeString *liste = malloc(sizeof(ListeString));
 	String *temp = malloc(sizeof(String));
@@ -180,10 +185,150 @@ char *autoComplete(char *saisie, Niveau *niveau){
 		insertionString(liste, temp->string);
 	}
 	//appel de la méthode exec pour le ls
+	char *lsResult = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
+	lsResult = ls();
+    char *t = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    t = strtok(lsResult, "\n");
+    insertionString(liste, t);
+    while((t = strtok(NULL, "\n")) != NULL)
+    	insertionString(liste, t);
+
+    temp = malloc(sizeof(String));
+    temp = liste->premier;
+    // printw("- %s\n", temp->string);
+    // while((temp = temp->suivant) != NULL)
+    // 	printw("- %s\n", temp->string);
+
+    char *test = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    int continuer = 1;
+    // Sélectionne le dernier mot tapé si il y a des espaces
+	char *dernierMot = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	char *saisieCpy = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+	strcpy(saisieCpy, saisie);
+
+    if(strstr(saisie, " ") != NULL){
+    	printw("espace\n");
+	    // printw("dernierMot : |%s|", (dernierMot = strtok(saisieCpy, " ")));
+	    if((dernierMot = strtok(saisieCpy, " ")) != NULL){
+	    	// printw("dernierMot : %s\n", dernierMot);
+	    	strcpy(test, dernierMot);
+	    	while((dernierMot = strtok(NULL, " ")) != NULL){
+	    		// printw("dernierMot : %s\n", dernierMot);
+	    		strcpy(test, dernierMot);
+	    	}
+	    }
+	    else {
+	    	strcpy(dernierMot, saisieCpy);
+	    }
+	    strcpy(saisieCpy, test);
+	}
+	
+    // Construit une liste de toutes les possibilités qui match
+    
+    ListeString *results = malloc(sizeof(ListeString));
+    int match = 0, x, y;
+    continuer = 1;
+    free(test);
+    test = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    strcpy(test, saisieCpy);
+    // printw("test : %s\n", test);
+    while(continuer){
+    	if ((temp->suivant) != NULL){
+    		temp = temp->suivant;
+			if(!strcmp(substr(temp->string, 0, strlen(test)), test) ){
+				// strcpy(test, substr(temp->string, strlen(test), strlen(temp->string)));
+				// printw("test : %s _ %s\n", substr(temp->string, 0, strlen(test)), test);
+				if(!match){
+					// printw("initialisation : %s\n", temp->string);
+					initialisationString(results, temp->string);
+				}
+				else{
+					// printw("insertion : %s\n", temp->string);
+					insertionString(results, temp->string);
+				}
+				match = 1;
+    		}
+    	}else{
+    		continuer = 0;
+    	}
+    }
+
+
+    // Complète la saisie jusqu'à la première ambiguïté
+  
+    // printw("results : \n");
+    free(temp);
+    temp = malloc(sizeof(String));
+    // test = malloc(sizeof(String));
+    
+    int fin = 0, i = 0;
+    // printw("results :\n");
+    // printw("\t %s\n", results->premier->string);
+    // temp = results->premier;
+    // while((temp = temp->suivant) != NULL)
+    // 	printw("\t %s\n", temp->string);
+    free(test);
+    test = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    strcpy(test, "");
+    // printw("saisie : %s", saisie);
+    free(temp);
+    temp = malloc(sizeof(String));
+    while(!fin){
+    		if(temp->suivant == NULL)
+    			temp->suivant = results->premier;
+    		// fprintf(stderr, "suivant null ? %d\n", temp->suivant == NULL);
+    		temp = temp->suivant;
+    		// fprintf(stderr, "tête ? %d\n", temp == results->premier);
+    		// printw("__test : %s\n", test);
+    		if(temp == results->premier){
+    			i++;
+    			// fprintf(stderr, "valeur de i : %d, ajout : %s\n", i, results->premier->string);
+			    // printw("_test : %s + %s - %d\n", test, substr(results->premier->string, i, i), i);
+    			// strcat(test, substr(results->premier->string, i, i));
+    			sprintf(test, "%s%c", test, results->premier->string[i]);
+    			
+    		}
+    		// fprintf(stderr, "recherche du char, %s\n", strstr(temp->string, test));
+    		// fprintf(stderr, "premier : %s\n", results->premier->string);
+    		if(strstr(temp->string, test) == NULL || i > strlen(results->premier->string)){
+    			// fprintf(stderr, "condition finale, i=%d, test = %s\n", i, test);
+    			// printw("test : %s\n", test);
+    			sprintf(test, "%s", substr(test, 0, strlen(test)-1));
+    			fin = 1;
+    		}
+	    	// strcpy(test, strstr(results->premier->string, temp->string));
+	    	// printw("t : %s\nt : %s\ncomposé : %s", results->premier->string, temp->string, strstr(results->premier->string, temp->string));
+    	// }else
+    	// 	temp->suivant = results->premier;
+    }
+    
+
+    // free(liste);
+    // free(temp);
+    // free(ls);
+    // free(t);
+    // free(dernierMot);
+    // free(saisieCpy);
+    // free(results);
+    // printw("\ntest : %s\n", test);
+    if(match)
+		return substr(test,strlen(saisie)-1,strlen(test))/*test/**/;
+	else
+		return "";
+}
+
+void ifTab(Commande *commande){
+	if (strstr(commande->commande, "\t") != NULL)
+	{
+		wprintw(stdscr, "ifTab\n");
+	}
+}
+
+char *ls(){
+	char *ls = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
 	int fd[2];
 	pipe(fd);
 	int status;
-	char *ls = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
 	int pid = fork();
 	if(pid == 0)
     {
@@ -200,94 +345,5 @@ char *autoComplete(char *saisie, Niveau *niveau){
         	read(fd[0], ls, TAILLE_MAX_COMMANDE*200);
         }
     }
-    char *t = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-    t = strtok(ls, "\n");
-    insertionString(liste, t);
-    while((t = strtok(NULL, "\n")) != NULL)
-    	insertionString(liste, t);
-
-    temp = malloc(sizeof(String));
-    temp = liste->premier;
-    // printw("- %s\n", temp->string);
-    // while((temp = temp->suivant) != NULL)
-    // 	printw("- %s\n", temp->string);
-    int continuer = 1;
-
-    char *dernierMot = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-    char *saisieCpy = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-    char *test = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-    strcpy(saisieCpy, saisie);
-    // printw("dernierMot : |%s|", (dernierMot = strtok(saisieCpy, " ")));
-    if((dernierMot = strtok(saisieCpy, " ")) != NULL){
-    	// printw("dernierMot : %s\n", dernierMot);
-    	strcpy(test, dernierMot);
-    	while((dernierMot = strtok(NULL, " ")) != NULL){
-    		// printw("dernierMot : %s\n", dernierMot);
-    		strcpy(test, dernierMot);
-    	}
-    }
-    else {
-    	strcpy(dernierMot, saisieCpy);
-    }
-    ListeString *results = malloc(sizeof(ListeString));
-    /** Cas à traiter :
-    	une lettre est incluse dans le mot mais n'est pas le commencement (a dans cat)
-    	deux fichiers qui commencent pareil, n'afficher que ce qui est commun aux deux
-    */
-    int match = 0, x, y;
-
-    while(continuer){
-    	if ((temp->suivant) != NULL){
-    		temp = temp->suivant;
-			if(!strcmp(substr(temp->string, 0, strlen(test)), test) ){
-				// strcpy(test, substr(temp->string, strlen(test), strlen(temp->string)));
-				if(!match)
-					initialisationString(results, temp->string);
-				else
-					insertionString(results, temp->string);
-				match = 1;
-    		}
-    	}else{
-    		continuer = 0;
-    		temp->suivant = liste->premier;
-    	}
-    }
-
-
-
-    // printw("results : \n");
-    temp = malloc(sizeof(String));
-    temp = results->premier;
-    test = malloc(sizeof(String));
-    int fin = 0, i = 0;
-    // printw("\t %s\n", temp->string);
-    // while(!fin){
-    // 	if(temp->suivant != NULL){
-    // 		temp = temp->suivant;
-    // 		if(temp = results->premier){
-    // 			i++;
-    // 			strcpy(test, substr(results->premier->string, 0, i));
-    // 		}
-    // 		if(strstr(temp->string, test) == NULL){
-    // 			sprintf(test, "%s", substr(test, 0, strlen(test)-1));
-    // 			fin = 1;
-    // 		}
-	   //  	// strcpy(test, strstr(results->premier->string, temp->string));
-	   //  	// printw("t : %s\nt : %s\ncomposé : %s", results->premier->string, temp->string, strstr(results->premier->string, temp->string));
-    // 	}else
-    // 		temp->suivant = results->premier;
-    // }
-
-    printw("\ntest : %s\n", test);
-    if(match)
-		return "_";
-	else
-		return "";
-}
-
-void ifTab(Commande *commande){
-	if (strstr(commande->commande, "\t") != NULL)
-	{
-		wprintw(stdscr, "ifTab\n");
-	}
+    return ls;
 }

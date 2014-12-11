@@ -97,8 +97,12 @@ int main(int argc, char *argv[])
 				}
 				
 				char *essai = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
-				strcpy(saisie, strcat(saisie, autoComplete(saisie, niveau)));
-				printw("%s", saisie);
+				if(strlen(autoComplete(saisie, niveau)) == 0)
+					finCommande = 1;
+				else{
+					strcpy(saisie, strcat(saisie, autoComplete(saisie, niveau)));
+					printw("%s", saisie);
+				}
 			}
     		else if(ch == '\n'){
     			finCommande = 1;

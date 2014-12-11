@@ -32,3 +32,6 @@ char *autoComplete(char *saisie, Niveau *niveau);
 
 // Traite l'appui sur la touche tab
 void ifTab(Commande *commande);
+
+// Renvoi le contenu du ls du dossier courant
+char *ls();
