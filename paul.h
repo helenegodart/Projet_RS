@@ -22,7 +22,7 @@ void readFile(Niveau *niveau, Commande *commande, char *token);
 char *choixNiveau(int argc, char *argv[]);
 
 // Vérifie que la sortie est bien la phrase à trouver
-void verification(char *sortie, Niveau *niveau);
+void verification(char *sortie, Niveau *niveau, Commande *commande);
 
 // Renvoi le nom du fichier contenu dans string
 char *findFileName(char *fichier, Commande *commande, Commande *newCommande, char *token);
@@ -38,3 +38,6 @@ char *ls();
 
 // Efface la commande tapée par l'utilisateur
 void effaceCommande(Commande *commande);
+
+// free() tous les composants principaux à la fin de l'exécution
+void freeAll(Niveau *niveau, Commande *commande);

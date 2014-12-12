@@ -1,3 +1,3 @@
 void ifExit(Niveau *niveau, Commande *commande);
-void removeDirectory(Niveau *niveau);
+void removeDirectory(char *nom);
 void rmdir_recursive(char *directoryPath);

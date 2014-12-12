@@ -77,6 +77,7 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
 
     niveau->nom = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
     strcpy(niveau->nom, nomNiveau);
+    // fprintf(stderr, "niveau->nom : %s\n", niveau->nom);
 
     niveau->history = malloc(sizeof(niveau->history));
     initialisationString(niveau->history, "exit");
@@ -162,6 +163,7 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
                 commande->niveau = 0;
                 // execlp("ls", "ls", NULL);
                 strcpy(nomNiveau, nom);
+                // fprintf(stderr, "nomNiveau : %s\n", nomNiveau);
                 creerNiveau("meta", niveau, nomNiveau);
                 // descriptifNiveau(niveau);
                 remove("meta");
@@ -169,6 +171,8 @@ void decompression(char *nom, Commande *commande, Niveau *niveau){
         }
         remove(decompresse);
         free(decompresse);
+        free(nomNiveau);
+        free(dest);
     }
 }
 

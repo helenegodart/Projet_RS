@@ -62,11 +62,13 @@ int main(int argc, char *argv[])
     	noecho();
     	keypad(stdscr, TRUE);
     	intrflush(stdscr, FALSE);
+    printw("nom : %s\n", niveau->nom);
 	int x, y;
 	int nbAppuiUp = 0;
+	char *saisie;
 	while(continuer){      
 		finCommande = 0;
-		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
+		saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
 		debutLigne(commande, niveau);
 
 		while(finCommande == 0){
@@ -76,9 +78,11 @@ int main(int argc, char *argv[])
 			if (ch == KEY_BACKSPACE)
 			{
 				getyx(stdscr, y, x);
-				move(y, x-1);
-				delch();
-				strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
+				if(x > strlen(commande->directory)+3){
+					move(y, x-1);
+					delch();
+					strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
+				}
 			}
 			else if(ch == KEY_LEFT){
 				getyx(stdscr, y, x);
@@ -131,12 +135,7 @@ int main(int argc, char *argv[])
 				strcpy(saisie, substr(saisie, 0, strlen(saisie)-1));
 			}
 			else if(ch == '\t'){
-				int i;
-				for(i = 0; i < strlen(saisie); i++){
-					getyx(stdscr, y, x);
-					move(y, x-1);
-					delch();
-				}
+				effaceCommande(commande);
 				
 				char *essai = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
 				if(strlen(autoComplete(saisie, niveau)) == 0)
@@ -157,6 +156,7 @@ int main(int argc, char *argv[])
 		}
 		strcpy(commande->commande, saisie);
 		execution(commande, niveau);
+		// free(saisie);
 	}
 	endwin();
 	return 0;
@@ -164,7 +164,6 @@ int main(int argc, char *argv[])
 
 void execution(Commande *commande, Niveau *niveau){
 	fixDirectory(commande, niveau);
-	printw("insertionString : %s\n", commande->commande);
 	insertionString(niveau->history, commande->commande);
 	int nbArgument = nbArg(commande);
 	int ok = 1;
@@ -224,7 +223,7 @@ void execution(Commande *commande, Niveau *niveau){
 			// commandes autres
 			else
 			{
-				printw("%s", exec(listeArg, commande, niveau));
+				printw("%s", exec(listeArg, commande, &(*niveau)));
 			}
 		}
 	}
@@ -311,7 +310,8 @@ char *exec(ListeString *listeArg, Commande *commande, Niveau *niveau){
         	commande->pid = getpid();
         	char *sortie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE*200);
         	read(fd[0], sortie, TAILLE_MAX_COMMANDE*200);
-        	verification(sortie, niveau);
+        	// fprintf(stderr, "verification : %s\n", niveau->nom);
+        	verification(sortie, &(*niveau), commande);
         	return sortie;
         }
         else

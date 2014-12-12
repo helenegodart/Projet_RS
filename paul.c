@@ -119,7 +119,9 @@ char *findFileName(char *fichier, Commande *commande, Commande *newCommande, cha
 	strcpy(newCommande->commande, com);
 	strcpy(newCommande->directory, commande->directory);
 	newCommande->niveau = commande->niveau;
-
+	free(ligne);
+	free(temp);
+	free(com);
 	return fichier;
 }
 
@@ -139,8 +141,8 @@ char *deleteSpaces(char *chain){
 char *choixNiveau(int argc, char *argv[]){
 	if (argc != 2)
 	{
-		printw("Il faut donner en argument (seulement) l'archive du niveau !\n");
 		endwin();
+		fprintf(stderr, "Il faut donner en argument (seulement) l'archive du niveau !\n");
 		exit(EXIT_FAILURE);
 	}else{
 		char *temp = malloc(strlen(argv[1])*sizeof(char));
@@ -160,15 +162,24 @@ char *choixNiveau(int argc, char *argv[]){
 	}
 }
 
-void verification(char *sortie, Niveau *niveau){
+void verification(char *sortie, Niveau *niveau, Commande *commande){
 	char *test = malloc(sizeof(char)*strlen(sortie));
 
 	if((test = strstr(sortie, niveau->phraseMystere)) != NULL){
-		printw("NIVEAU REUSSI !!\n");
+		printw("verification : %s\n", niveau->nom);
+		printw("********************************\n*                              *\n*       NIVEAU REUSSI !!       *\n*                              *\n********************************\n");
+		int ch = wgetch(stdscr);
 		endwin();
-		removeDirectory(niveau->nom);
+		char *nom = malloc(sizeof(char)*strlen(niveau->nom));
+		strcpy(nom, niveau->nom);
+		fprintf(stderr, "removeDirectory de %s\n", nom);
+		removeDirectory(nom);
+		free(nom);
+		free(test);
+		freeAll(niveau, commande);
 		exit(EXIT_SUCCESS);	
 	}
+	free(test);
 }
 
 char *autoComplete(char *saisie, Niveau *niveau){
@@ -362,4 +373,31 @@ void effaceCommande(Commande *commande){
 		delch();
 		getyx(stdscr, y, x);
 	}
+}
+
+void freeAll(Niveau *niveau, Commande *commande){
+	free(commande);
+
+	String *temp1 = malloc(sizeof(temp1));
+	String *temp2 = malloc(sizeof(temp2));
+	temp1 = niveau->charAutorise->premier;
+	while(temp1->suivant != NULL){
+		temp2 = temp1;
+		free(temp1);
+		temp1 = temp2->suivant;
+	}
+
+	free(temp1);
+	free(temp2);
+	free(niveau->charAutorise);
+
+	temp1 = malloc(sizeof(temp1));
+	temp2 = malloc(sizeof(temp2));
+	temp1 = niveau->history->premier;
+	while(temp1->suivant != NULL){
+		temp2 = temp1;
+		free(temp1);
+		temp1 = temp2->suivant;
+	}
+	free(niveau->history);
 }

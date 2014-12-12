@@ -70,7 +70,7 @@ int nbArg(Commande *commande){
 	strtok(temp, " ");
 	while(strtok(NULL, " ") != NULL)
 		nb = nb +1;
-
+  free(temp);
 	return nb;
 }
 
@@ -168,6 +168,8 @@ int incrementNiveau(Commande *commande){
       cpt--;
     }
   }
+  free(chaine);
+  free(temp);
   return cpt;
 }
 
@@ -189,6 +191,8 @@ void fixDirectory(Commande *commande, Niveau *niveau){
     strcpy(commande->directory, niveau->nom);
   else
     strcpy(commande->directory, temp);
+
+  // free(temp);
 }
 
 void pwd(Commande *commande){
