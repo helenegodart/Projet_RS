@@ -207,7 +207,7 @@ char *autoComplete(char *saisie, Niveau *niveau){
 	strcpy(saisieCpy, saisie);
 
     if(strstr(saisie, " ") != NULL){
-    	printw("espace\n");
+    	// printw("espace\n");
 	    // printw("dernierMot : |%s|", (dernierMot = strtok(saisieCpy, " ")));
 	    if((dernierMot = strtok(saisieCpy, " ")) != NULL){
 	    	// printw("dernierMot : %s\n", dernierMot);
@@ -220,8 +220,13 @@ char *autoComplete(char *saisie, Niveau *niveau){
 	    else {
 	    	strcpy(dernierMot, saisieCpy);
 	    }
+	    // printw("test : %s, saisieCpy : %s\n", test, saisieCpy);
+	    free(saisieCpy);
+	    saisieCpy = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
 	    strcpy(saisieCpy, test);
 	}
+
+	// printw("_saisieCpy : %s\n", saisieCpy);
 	
     // Construit une liste de toutes les possibilités qui match
     
@@ -297,7 +302,7 @@ char *autoComplete(char *saisie, Niveau *niveau){
     			fin = 1;
     		}
 	    	// strcpy(test, strstr(results->premier->string, temp->string));
-	    	// printw("t : %s\nt : %s\ncomposé : %s", results->premier->string, temp->string, strstr(results->premier->string, temp->string));
+	    	// printw("t : %s\nt : %s\ncomposé : %s\n", results->premier->string, temp->string, strstr(results->premier->string, temp->string));
     	// }else
     	// 	temp->suivant = results->premier;
     }
@@ -310,9 +315,10 @@ char *autoComplete(char *saisie, Niveau *niveau){
     // free(dernierMot);
     // free(saisieCpy);
     // free(results);
-    // printw("\ntest : %s\n", test);
+    // printw("\ntest : %s, saisieCpy %s\n", test, saisieCpy);
+    // printw("valretour : %s\n", substr(test,strlen(saisieCpy)-1,strlen(test)));
     if(match)
-		return substr(test,strlen(saisie)-1,strlen(test))/*test/**/;
+		return substr(test,strlen(saisieCpy)-1,strlen(test))/*test/**/;
 	else
 		return "";
 }
