@@ -166,6 +166,7 @@ void verification(char *sortie, Niveau *niveau){
 	if((test = strstr(sortie, niveau->phraseMystere)) != NULL){
 		printw("NIVEAU REUSSI !!\n");
 		endwin();
+		removeDirectory(niveau->nom);
 		exit(EXIT_SUCCESS);	
 	}
 }
@@ -350,4 +351,15 @@ char *ls(){
         }
     }
     return ls;
+}
+
+void effaceCommande(Commande *commande){
+	int directorySize = strlen(commande->directory) + 3;
+	int x, y;
+	getyx(stdscr, y, x);
+	while(x > directorySize){
+		move(y, x-1);
+		delch();
+		getyx(stdscr, y, x);
+	}
 }

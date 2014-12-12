@@ -63,12 +63,16 @@ int main(int argc, char *argv[])
     	keypad(stdscr, TRUE);
     	intrflush(stdscr, FALSE);
 	int x, y;
+	int nbAppuiUp = 0;
 	while(continuer){      
 		finCommande = 0;
 		char *saisie = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
 		debutLigne(commande, niveau);
+
 		while(finCommande == 0){
 			ch = wgetch(stdscr);
+			if(ch != KEY_UP && ch !=KEY_DOWN)
+				nbAppuiUp = 0;
 			if (ch == KEY_BACKSPACE)
 			{
 				getyx(stdscr, y, x);
@@ -83,6 +87,44 @@ int main(int argc, char *argv[])
 			else if(ch == KEY_RIGHT){
 				getyx(stdscr, y, x);
 				move(y, x+1);
+			}
+			else if (ch == KEY_UP)
+			{
+				nbAppuiUp++;
+				String *temp = malloc(sizeof(String));
+				temp = niveau->history->premier;
+				if (temp->suivant != NULL)
+				{
+					int i = 0;
+					while(i < nbAppuiUp && temp->suivant != NULL){
+						temp = temp->suivant;
+						i++;
+					}
+					free(saisie);
+					saisie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+					strcpy(saisie, temp->string);
+					effaceCommande(commande);
+					printw("%s", saisie);
+				}
+			}
+			else if (ch == KEY_DOWN)
+			{
+				nbAppuiUp--;
+				String *temp = malloc(sizeof(String));
+				temp = niveau->history->premier;
+				if (temp->suivant != NULL)
+				{
+					int i = 0;
+					while(i < nbAppuiUp && temp->suivant != NULL){
+						temp = temp->suivant;
+						i++;
+					}
+					free(saisie);
+					saisie = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+					strcpy(saisie, temp->string);
+					effaceCommande(commande);
+					printw("%s", saisie);
+				}
 			}
 			else if(ch == KEY_DC){
 				delch();
@@ -122,6 +164,8 @@ int main(int argc, char *argv[])
 
 void execution(Commande *commande, Niveau *niveau){
 	fixDirectory(commande, niveau);
+	printw("insertionString : %s\n", commande->commande);
+	insertionString(niveau->history, commande->commande);
 	int nbArgument = nbArg(commande);
 	int ok = 1;
 	int redirect = 1;

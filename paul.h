@@ -35,3 +35,6 @@ void ifTab(Commande *commande);
 
 // Renvoi le contenu du ls du dossier courant
 char *ls();
+
+// Efface la commande tapée par l'utilisateur
+void effaceCommande(Commande *commande);

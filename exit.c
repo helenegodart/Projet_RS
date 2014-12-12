@@ -30,7 +30,6 @@ void removeDirectory(Niveau *niveau){
     }
     else
     {
-    	fprintf(stderr, "strstr : %s, niveau->nom : %s\n", strstr(pwd, niveau->nom), niveau->nom);
 	    while(strcmp(strstr(pwd, niveau->nom), niveau->nom) != 0){
 	        chdir("..");
 	        getcwd(pwd, TAILLE_MAX_COMMANDE);

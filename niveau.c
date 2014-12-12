@@ -77,6 +77,9 @@ void creerNiveau(char *path, Niveau *niveau, char *nomNiveau)
 
     niveau->nom = malloc(TAILLE_MAX_COMMANDE*sizeof(char));
     strcpy(niveau->nom, nomNiveau);
+
+    niveau->history = malloc(sizeof(niveau->history));
+    initialisationString(niveau->history, "exit");
 }
 
 void initialisationString(ListeString *liste, char *c){
@@ -102,7 +105,8 @@ void insertionString(ListeString *liste, char *string){
         endwin();
         exit(EXIT_FAILURE);
     }
-    nouveau->string = string;
+    nouveau->string = malloc(sizeof(char)*strlen(string));
+    strcpy(nouveau->string, string);
 
     /* Insertion de l'élément au début de la liste */
     // printw("liste->premier : %s\n", liste->premier->string);
