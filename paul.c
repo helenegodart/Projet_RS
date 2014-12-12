@@ -308,13 +308,11 @@ char *autoComplete(char *saisie, Niveau *niveau){
     }
     
 
-    // free(liste);
-    // free(temp);
-    // free(ls);
-    // free(t);
-    // free(dernierMot);
-    // free(saisieCpy);
-    // free(results);
+    free(liste);
+    free(temp);
+    free(t);
+    free(dernierMot);
+    free(results);
     // printw("\ntest : %s, saisieCpy %s\n", test, saisieCpy);
     // printw("valretour : %s\n", substr(test,strlen(saisieCpy)-1,strlen(test)));
     if(match)

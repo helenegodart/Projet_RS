@@ -126,7 +126,7 @@ void execution(Commande *commande, Niveau *niveau){
 	int ok = 1;
 	int redirect = 1;
 	// printw("nb arg : %d\n", nbArgument);
-	exceptionProcessing(commande);
+	exceptionProcessing(niveau, commande);
 	// Vérifie que la commande ne soit pas vide
 	if (strlen(commande->commande) == 0){}
 	else
@@ -221,8 +221,8 @@ void determinationArgs(ListeString *liste, Commande *commande){
 	}
 }
 
-void exceptionProcessing(Commande *commande){
-	ifExit(commande);
+void exceptionProcessing(Niveau *niveau, Commande *commande){
+	ifExit(niveau, commande);
 	ifTab(commande);
 }
 

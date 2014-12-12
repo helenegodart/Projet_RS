@@ -6,12 +6,45 @@
 #include "niveau.h"
 #include "utilitaire.h"
 #include "terminal.h"
+#include "exit.h"
 
-void ifExit(Commande *commande){
+void ifExit(Niveau *niveau, Commande *commande){
 
 char *temp = malloc(sizeof(char)*strlen(commande->commande));
 	if (strcmp(commande->commande, "exit")==0){
 		endwin();
+		removeDirectory(niveau);
 		exit(EXIT_SUCCESS);		
 		}
+}
+
+void removeDirectory(Niveau *niveau){
+    char *pwd = malloc(sizeof(char)*TAILLE_MAX_COMMANDE);
+    getcwd(pwd, TAILLE_MAX_COMMANDE);
+    fprintf(stderr, "pwd : %s _ nom : %s\n", pwd, niveau->nom);
+    if (strstr(pwd, niveau->nom) == NULL)
+    {
+    	fprintf(stderr, "ERREUR impossible de supprimer le dossier %s\n", niveau->nom);
+    }
+    else
+    {
+    	fprintf(stderr, "strstr : %s, niveau->nom : %s\n", strstr(pwd, niveau->nom), niveau->nom);
+	    while(strcmp(strstr(pwd, niveau->nom), niveau->nom) != 0){
+	        chdir("..");
+	        getcwd(pwd, TAILLE_MAX_COMMANDE);
+	        fprintf(stderr, "dossier : %s\n", pwd);
+	    }
+	    int pid = fork();
+	    if(pid == 0)
+	    {
+	        execlp("rm", "r", name, NULL);
+	        exit(0);
+	    }else
+	    {
+	        waitpid(pid, &status, WCONTINUED);
+	        if (WIFEXITED(status))
+	        {
+	        }
+	    }
+    }
 }
